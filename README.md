@@ -1,6 +1,14 @@
 # Crypto & Meme Coin System (practice / pretend money)
 Part of a 3-system setup (crypto+meme · day trading · stocks) that will later share one "home" app. **No real money. No API keys in this repo.**
 
+## 🧭 The combined system (`src/system/`) — runs live on GitHub every ~5 min
+One system, two trading places:
+- **Hyperliquid side:** copies the 10 skilled traders' new trades in **major crypto, altcoins, established memes, commodities (oil, gold…), stocks/indexes and forex** — each with its own rules.
+- **Axiom side (Solana):** finds brand-new meme coins with the meme safety + timing checks.
+- **Detector** (`classifier.py`) labels every coin/market first: 🟦 major · 🟩 altcoin · 🟨 established meme · 🟥 new meme · 🛢️ commodity · 📈 stock/index · 💱 forex/bonds · 🚀 pre-IPO (not traded) · ❔ unknown (not traded).
+- **Money:** 85% Safe side (crypto + max 3 macro trades) · 15% Moonshot side (memes).
+- Results: `results/system/report.md` (by type) and `results/system/cards/` (every trade explained).
+
 ## What's inside
 | Folder | What it is |
 |---|---|
