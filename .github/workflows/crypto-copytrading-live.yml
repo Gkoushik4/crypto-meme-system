@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  actions: write        # lets each run start the next one (keeps it running non-stop)
 jobs:
   cycle:
     runs-on: ubuntu-latest
@@ -46,3 +47,8 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -q -m "Live copy-trading update $(date -u +'%Y-%m-%d %H:%M') UTC"
           for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin main && break; sleep 5; done
+      - name: Start the next run (non-stop practice; turn off in Actions → ⋯ → Disable workflow)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run crypto-copytrading-live.yml --ref main
