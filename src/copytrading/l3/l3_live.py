@@ -86,8 +86,10 @@ def kronos(c4):
             os.environ.setdefault("HF_HUB_DISABLE_XET", "1"); sys.path.insert(0, os.environ.get("KRONOS_DIR", "/root/Kronos"))
             import torch; torch.set_num_threads(2); torch.manual_seed(0)
             from model import Kronos, KronosTokenizer, KronosPredictor
-            KR = KronosPredictor(Kronos.from_pretrained("NeoQuasar/Kronos-small"),
-                                 KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base"), device="cpu", max_context=512)
+            W = os.environ.get("KRONOS_WEIGHTS")          # local backup (kronos-core/weights) if set, else Hugging Face
+            KR = KronosPredictor(Kronos.from_pretrained(f"{W}/Kronos-small" if W else "NeoQuasar/Kronos-small"),
+                                 KronosTokenizer.from_pretrained(f"{W}/Kronos-Tokenizer-base" if W else "NeoQuasar/Kronos-Tokenizer-base"),
+                                 device="cpu", max_context=512)
         df = c4.tail(400)
         x = df[["open", "high", "low", "close", "volume"]].reset_index(drop=True)
         xs = pd.Series(df.index); ys = pd.Series(pd.date_range(df.index[-1] + pd.Timedelta(hours=4), periods=6, freq="4h"))
@@ -191,9 +193,13 @@ def step_position(p, bars):
         if exit_px is not None:
             exit_px *= (1 - d * R.SLIPPAGE)
             ret = d * (exit_px / entry - 1) - 2 * R.FEE
-            return {**p, "closed": str(t), "exit": exit_px, "ret": ret, "R": ret / sd, "pnl": p["notional"] * ret, "why": why}
+            pnl = p.get("part_pnl", 0.0) + p["notional"] * p.get("frac", 1.0) * ret
+            return {**p, "closed": str(t), "exit": exit_px, "ret": pnl / p["notional"], "R": pnl / (p["notional"] * sd), "pnl": pnl, "why": why}
         p["best"] = max(p["best"], b.high) if d == 1 else min(p["best"], b.low)
         gain_r = d * (p["best"] / entry - 1) / sd
+        if p.get("scale") and not p.get("scaled") and gain_r >= 1:          # version 5: sell half at +1R
+            lvl = entry * (1 + d * sd) * (1 - d * R.SLIPPAGE)
+            p["part_pnl"] = p["notional"] * 0.5 * (d * (lvl / entry - 1) - 2 * R.FEE); p["frac"] = 0.5; p["scaled"] = True
         if gain_r >= R.BREAK_EVEN_AT_R:
             be = entry * (1 + d * 2 * R.FEE)
             p["stop"] = max(p["stop"], be) if d == 1 else min(p["stop"], be)
@@ -257,7 +263,8 @@ def close_card(cs, checks_ok, fails, team):
     return "\n".join(L)
 
 # ============================ the engine ============================
-VERSIONS = ["1 Copy every trade", "2 + emergency pause & stand-in", "3 + trade check", "4 + really-good while paused"]
+VERSIONS = ["1 Copy every trade", "2 + emergency pause & stand-in", "3 + trade check", "4 + really-good while paused",
+            "5 Copy every trade + scale out", "6 Copy every trade + stop-and-reverse"]   # 5 & 6 added 2026-10-20 (winners of the flip test)
 
 class Engine:
     def __init__(self, mk, team, state_file):
@@ -310,6 +317,15 @@ class Engine:
                 if c:
                     c["version"] = book_name; book["cash"] += c["pnl"]; book["closed"].append(c)
                     closes.setdefault(c["sig_id"], []).append(c)
+                    if book_name.startswith("6") and c["why"] == "stop-loss" and not c.get("reversed"):   # version 6: flip once
+                        c1 = self.mk.candles(c["coin"], "1h", now - pd.Timedelta(days=30), now)
+                        rs = {"id": c["sig_id"], "trader": c["trader"], "coin": c["coin"], "dir": -c["dir"]}
+                        if len(still) < R.MAX_OPEN and len(c1) >= 50:
+                            rp = open_position(rs, c["exit"], c1, pd.Timestamp(c["closed"]), book["cash"], 1.0)
+                            if rp:
+                                rp["reversed"] = True; still.append(rp)
+                                self.card(f"### ↩️ v6 stop-and-reverse: {c['coin']} {'long' if c['dir'] == 1 else 'short'} was stopped out — flipped to "
+                                          f"{'short' if c['dir'] == 1 else 'long'} at {fmt(c['exit'])} (one flip only)", now, "entry")
                 else: still.append(p)
             book["open"] = still
         still = []
@@ -369,7 +385,7 @@ class Engine:
         decisions, plan = {}, None
         for v in VERSIONS:
             book = self.st["books"][v]; w = 1.0
-            if v.startswith("1"):
+            if v[0] in "156":
                 take, why = is_main, "copies every main-team trade" if is_main else "bench traders only trade as stand-ins"
             else:
                 if is_main and not paused: take, why = True, "trader is in good form"
@@ -384,6 +400,7 @@ class Engine:
             if take and any(p["coin"] == coin and p["dir"] == d for p in book["open"]): take, why = False, "already in this trade"
             if take:
                 p = open_position(sig, px_now, c1, now, book["cash"], w)
+                if p and v.startswith("5"): p["scale"] = True
                 if p: book["open"].append(p); plan = plan or p
                 else: take, why = False, "not enough price data for a stop"
             decisions[v] = (take, why)
@@ -468,6 +485,16 @@ if __name__ == "__main__":
         print(eng.summary().to_string(index=False))
         (DATA / "weekly_lesson.md").write_text(eng.weekly_lesson(end))
         print("REPLAY DONE")
+    elif mode == "once":                      # one cycle (used by the GitHub schedule every ~5 min)
+        mk = Market(); eng = Engine(mk, team, DATA / "state.json"); now = pd.Timestamp.utcnow().tz_localize(None)
+        if not eng.st.get("started"): eng.st["started"] = str(now)
+        eng.cycle(now)
+        (DATA / "report.md").write_text(f"# Crypto copy-trading — LIVE practice (pretend money)\n*Started {eng.st['started'][:16]} UTC · updated {now:%Y-%m-%d %H:%M} UTC*\n\n"
+                                        + md_table(eng.summary()) + "\n\n## Team changes\n" + "\n".join(f"- {e['t'][:16]} {e['msg']}" for e in eng.st["events"][-20:]))
+        wk = now.strftime("%G-%V")
+        if now.weekday() == 6 and now.hour >= 18 and eng.st.get("lesson_week") != wk:
+            (DATA / f"lesson_{wk}.md").write_text(eng.weekly_lesson(now)); eng.st["lesson_week"] = wk; eng.save()
+        print(eng.summary().to_string(index=False))
     else:
         mk = Market(); eng = Engine(mk, team, DATA / "state.json")
         last_week = None
