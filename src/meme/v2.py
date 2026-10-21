@@ -30,6 +30,10 @@ SELL_PRESSURE_CHECKS = 6
 MAX_HOLD_H = 12
 STAIR_N, STAIR_GREEN, STAIR_MAX_DIP, STAIR_VOL_CV = 24, 0.85, 0.05, 0.35
 SLIP, FEE, NET_FEE = EB.SLIP, EB.DEX_FEE, EB.NET_FEE
+# rug-risk mode (added 2026-10-20, user's idea): high rug-risk coins sell faster at big gains
+RR_POOL_VS_VALUE, RR_TOP10, RR_CREATOR, RR_SOFT_STAIR = 0.15, 0.25, 0.01, (0.75, 0.08)
+RUG_USER = [(1.50, 0.75), (2.00, 1.00)]                 # user's version: +150% sell 75%, +200% sell the rest
+RUG_BLEND = [(0.50, 0.25), (1.50, 0.50), (2.00, 1.00)]  # safer blend: +50% 25%, +150% 50%, +200% the rest
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data_v2"; DATA.mkdir(exist_ok=True)
@@ -171,21 +175,30 @@ def collect(st):
         st["pruned"] = now()
 
 # ============================ staircase detector ============================
-def staircase(pool):
+def staircase(pool, raw=False):
     j = gget(f"/pools/{pool}/ohlcv/minute", {"aggregate": 5, "limit": STAIR_N, "currency": "usd"}) or {}
     l = sorted(((j.get("data") or {}).get("attributes") or {}).get("ohlcv_list") or [])
-    if len(l) < 12: return False, "not enough history"
+    if len(l) < 12: return (False, "not enough history", None, None) if raw else (False, "not enough history")
     green = sum(1 for x in l if x[4] >= x[1]) / len(l)
     peak, dip = 0, 0
     for x in l: peak = max(peak, x[2]); dip = max(dip, 1 - x[3] / peak if peak else 0)
     vols = [x[5] for x in l]; cv = statistics.pstdev(vols) / statistics.mean(vols) if statistics.mean(vols) else 9
     hit = green >= STAIR_GREEN and dip < STAIR_MAX_DIP and cv < STAIR_VOL_CV
+    if raw: return hit, f"{green:.0%} of 5-min candles up, biggest dip {dip:.0%}, volume evenness {cv:.2f}", green, dip
     return hit, f"{green:.0%} of 5-min candles up, biggest dip {dip:.0%}, volume evenness {cv:.2f}"
 
+def rug_risk(F, stair_green, stair_dip):
+    why = []
+    if F.get("fdv") and F.get("reserve", 0) / F["fdv"] < RR_POOL_VS_VALUE: why.append(f"thin pool ({F['reserve'] / F['fdv']:.0%} of the coin's value)")
+    if F.get("top10", 0) > RR_TOP10: why.append(f"top 10 wallets hold {F['top10']:.0%}")
+    if F.get("dev_hold") is not None and F["dev_hold"] > RR_CREATOR: why.append(f"creator still holds {F['dev_hold']:.1%}")
+    if stair_green is not None and stair_green >= RR_SOFT_STAIR[0] and stair_dip < RR_SOFT_STAIR[1]: why.append("smooth climb, close to the staircase bot pattern")
+    return why
+
 # ============================ positions ============================
-def new_pos(F, path, trusted):
+def new_pos(F, path, trusted, mode="normal", shadow=False):
     e = F["price"] * (1 + SLIP)
-    return {"pool": F["pool"], "mint": F["mint"], "sym": F["sym"], "path": path, "opened": now(), "entry": e,
+    return {"mode": mode, "shadow": shadow, "id": f"{F['pool'][:8]}-{int(now())}", "pool": F["pool"], "mint": F["mint"], "sym": F["sym"], "path": path, "opened": now(), "entry": e,
             "qty0": (TRADE_USD * (1 - FEE) - NET_FEE) / e, "qty": None, "cost": TRADE_USD, "realized": 0.0, "peak": e,
             "stop": e * (1 + HARD_STOP), "flags": [], "log": [], "early": F.get("early", {}), "dev": F.get("dev"),
             "sold_early": [], "early_sold_tok": {}, "trusted": {w: {"tok": v["tok"], "top": v["top"]} for w, v in trusted.items()},
@@ -197,10 +210,15 @@ def sell(p, share, price, why, practice=True):
     if q <= 0: return
     p["qty"] -= q; p["realized"] += q * price * (1 - SLIP) * (1 - FEE) - NET_FEE
     p["log"].append(f"{ts()} sold {share:.0%} at {px(price)} ({price / p['entry'] - 1:+.0%}) — {why}")
-    if practice: card(f"### 🔴 v2 {p['sym']}: sell {share:.0%} at {px(price)} ({price / p['entry'] - 1:+.0%}) — {why}")
+    if practice and not p.get("shadow"): card(f"### 🔴 v2 {p['sym']}: sell {share:.0%} at {px(price)} ({price / p['entry'] - 1:+.0%}) — {why}")
 
 def manage(st, p, d):
     if p["qty"] is None: p["qty"] = p["qty0"]
+    if p.get("shadow") and p.get("parent"):          # shadow copies share the parent's holder/pro/alarm info (no extra data calls)
+        par = next((x for x in st["open"] if x["id"] == p["parent"]), None)
+        if par:
+            for k in ("sold_early", "trusted_sold", "dev_sold"): p[k] = par.get(k, p.get(k))
+            if "staircase" in par["flags"] and "staircase" not in p["flags"]: p["flags"].append("staircase")
     price, liq = d["price"], d["liq"]
     p["liq_peak"] = max(p["liq_peak"], liq)
     def out(why):
@@ -224,6 +242,13 @@ def manage(st, p, d):
     # 3) scam alarms
     if liq < (1 - POOL_DROP) * p["liq_peak"]: return out(f"pool money down {1 - liq / p['liq_peak']:.0%} from its peak (drain warning)")
     if "staircase" in p["flags"]: return out("staircase bot pattern (smooth climb = farm before a drain)")
+    if p.get("mode") in ("rug_user", "rug_blend"):        # rug-risk mode: sell fast at big gains
+        g0 = price / p["entry"] - 1
+        for k, (lvl, share) in enumerate(RUG_USER if p["mode"] == "rug_user" else RUG_BLEND):
+            if g0 >= lvl and once(f"rr{k}"):
+                sell(p, min(share, p["qty"] / p["qty0"]) if share < 1 else p["qty"] / p["qty0"], price, f"rug-risk mode: +{lvl:.0%} → sold {'the rest' if share >= 1 else f'{share:.0%}'}")
+                if lvl >= 0.5: p["stop"] = max(p["stop"], p["entry"] * (1.03 if lvl < 1.5 else 1 + FLOOR))
+        if p["qty"] <= p["qty0"] * 1e-9: p["why"] = "rug-risk mode: all sold at target"; return True
     if p.get("dev_sold"): return out("creator wallet sold")
     # 4) the pros
     pros_holding = [w for w in p["trusted"] if w not in p["trusted_sold"]]
@@ -235,9 +260,9 @@ def manage(st, p, d):
         if len(p["sold_early"]) >= WARN_SELLERS and once("warn"): sell(p, 0.25, price, f"{len(p['sold_early'])} big holders selling — early warning")
         p["pressure"] = p["pressure"] + 1 if d["sells"] > d["buys"] else 0
         if p["pressure"] >= SELL_PRESSURE_CHECKS: return out("more sellers than buyers for 30 seconds — the crowd turned")
-    # 5) profit lock
-    if g >= STEP1_AT and once("s1"): sell(p, STEP1, price, "+50%: sold 25% — fees and risk covered"); p["stop"] = max(p["stop"], p["entry"] * 1.03)
-    if g >= STEP2_AT and once("s2"): sell(p, STEP2, price, "+100%: sold 25% — our $10 is back"); p["stop"] = max(p["stop"], p["entry"] * (1 + FLOOR))
+    # 5) profit lock (normal-risk coins)
+    if p.get("mode") == "normal" and g >= STEP1_AT and once("s1"): sell(p, STEP1, price, "+50%: sold 25% — fees and risk covered"); p["stop"] = max(p["stop"], p["entry"] * 1.03)
+    if p.get("mode") == "normal" and g >= STEP2_AT and once("s2"): sell(p, STEP2, price, "+100%: sold 25% — our $10 is back"); p["stop"] = max(p["stop"], p["entry"] * (1 + FLOOR))
     if price <= p["stop"]:
         return out("hard stop −25%" if "s1" not in p["flags"] else ("floor stop +40% (profit locked)" if "s2" in p["flags"] else "break-even stop"))
     if now() - p["opened"] > MAX_HOLD_H * 3600: return out("12-hour limit")
@@ -353,7 +378,7 @@ def scan(st):
         if now() - st["traded_syms"].get(F["sym"].lower(), 0) < 86400:
             st["seen"][pool] = now() + 86400; continue
         if path == "A": tr = trusted_in(st, pool, BL or [])
-        hit, stxt = staircase(pool)
+        hit, stxt, sgreen, sdip = staircase(pool, raw=True)
         if hit:
             st["rejects"]["Staircase bot pattern"] = st["rejects"].get("Staircase bot pattern", 0) + 1; st["seen"][pool] = now() + 86400; continue
         dp = dex_prices([F["mint"]]).get(F["mint"])
@@ -364,13 +389,24 @@ def scan(st):
         if len(st["open"]) >= MAX_OPEN: why = f"already {MAX_OPEN} open"
         else:
             if st["cash"] < TRADE_USD and not st["ran_out"]: st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"
-            st["open"].append(new_pos(F, path, tr)); st["cash"] -= TRADE_USD; took = True
-        card(buy_card(F, C, path, tr, stxt, took, why)); print(f"[{ts()}] v2 BUY {F['sym']} path {path} pros {len(tr)} took={took}", flush=True)
+            F["dev_hold"] = F.get("dev_hold")
+            rr = rug_risk(F, sgreen, sdip)
+            pos = new_pos(F, path, tr, mode="rug_user" if rr else "normal"); pos["rug_why"] = rr
+            st["open"].append(pos); st["cash"] -= TRADE_USD; took = True
+            if rr:      # same coin, safer blend, tracked side by side (no money)
+                sh = new_pos(F, path, tr, mode="rug_blend", shadow=True); sh["parent"] = pos["id"]; st.setdefault("shadow", []).append(sh)
+        rr_txt = (f"\n\n**⚠️ RUG-RISK MODE:** {', '.join(pos['rug_why'])} → sell 75% at +150%, the rest at +200% "
+                  f"(the safer blend is tracked side by side)") if took and pos.get("rug_why") else ("\n\n**Normal-risk coin:** standard v2 profit lock." if took else "")
+        card(buy_card(F, C, path, tr, stxt, took, why) + rr_txt); print(f"[{ts()}] v2 BUY {F['sym']} path {path} pros {len(tr)} took={took}", flush=True)
     st["seen"] = {k: v for k, v in st["seen"].items() if v > now()}
 
 def tick(st):
-    if not st["open"]: return
-    d = dex_prices([p["mint"] for p in st["open"]])
+    sh = st.setdefault("shadow", [])
+    if not st["open"] and not sh: return
+    d = dex_prices(list({p["mint"] for p in st["open"] + sh}))
+    for p in list(sh):
+        x = d.get(p["mint"])
+        if x is not None and manage(st, p, x): sh.remove(p); st.setdefault("shadow_closed", []).append(p)
     for p in list(st["open"]):
         if now() >= p["next_holders"]: holders_update(st, p); p["next_holders"] = now() + HOLDERS_EVERY
         if now() >= p["next_stair"]:
@@ -401,6 +437,9 @@ def report(st):
         f"- **Early Bird entries (A):** {line([p for p in cl if p['path'] == 'A'])}",
         f"- **Smart-money entries (B):** {line([p for p in cl if p['path'] == 'B'])}",
         f"- **Trades with pros in the coin:** {line([p for p in cl if p['trusted']])}",
+        f"- **Normal-risk coins (standard profit lock):** {line([p for p in cl if p.get('mode') == 'normal'])}",
+        f"- **Rug-risk coins — your version (75% at +150%, rest at +200%):** {line([p for p in cl if p.get('mode') == 'rug_user'])}",
+        f"- **Rug-risk coins — safer blend (same coins, tracked side by side):** {line(st.get('shadow_closed', []))}",
         f"- **🚀 +100% trades:** {len(big)} so far (≈{len(big) / max(days, 0.01) * 30:.0f} per month at this pace)",
         (f"- ⚠️ Account ran out of money at {st['ran_out']} — continuing in tracking mode." if st.get("ran_out") else ""),
         f"- Scorebook: {len(st['wallets'])} wallets seen across {len(st['coins'])} coins · trusted pro/early wallets: {st.get('n_trusted', 0)}",

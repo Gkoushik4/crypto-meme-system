@@ -145,7 +145,7 @@ def evaluate(p, mints_traded_24h):
     for t in BL: bnet[t["w"]] += t["tok"] if t["buy"] else -t["tok"]
     early = {w: v for w, v in sorted(bnet.items(), key=lambda kv: -kv[1])[:20] if v > 0}   # 20 biggest big-wallet holders when we buy
     last_big = BL[-1]["tx"] if BL else None
-    F.update(top10=top10, dev=dev, early=early, seen_tx=[t["tx"] for t in BL] + [t["tx"] for t in L], socials=so, avg=avg)
+    F.update(top10=top10, dev=dev, dev_hold=dev_hold, early=early, seen_tx=[t["tx"] for t in BL] + [t["tx"] for t in L], socials=so, avg=avg)
     return C, F, L
 
 # ============================ positions ============================
