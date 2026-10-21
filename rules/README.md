@@ -8,3 +8,4 @@
 - 2026-10-19 Early Bird: fixed counting holders' sells from before our buy; biggest holders = big wallets ($50+ trades); live trade price instead of stale listed price.
 - 2026-10-20 Both meme tests: rug guard (drained pool = coins worth $0); fake-price guard (>2x jump must hold 3 checks with a healthy pool). Corrected fake wins: CT (+1442% → −5%), STREAM (+5049% → −5%).
 - 2026-10-20 Early Bird: account ran out of money (day 0.7) → tracking mode to keep collecting data.
+- 2026-10-20 Main meme test: added the 7-of-20 biggest-holders exit as a 4th exit style (shadow log on every coin). Main's practice account rules unchanged.

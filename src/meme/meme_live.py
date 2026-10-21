@@ -113,7 +113,7 @@ def research(a, p, meta):
     facts = dict(name=p["baseToken"].get("name"), symbol=p["baseToken"].get("symbol"), dex=p.get("dexId"), liq=liq, mcap=mcap,
                  age_h=age_h, vol_m5=vm5, vol_h1=vh1, vol_h6=v.get("h6") or 0, vol_h24=v.get("h24") or 0, chg_m5=c.get("m5") or 0, chg_h1=c.get("h1") or 0, chg_h24=c.get("h24") or 0,
                  buys_m5=m5.get("buys", 0), sells_m5=m5.get("sells", 0), buys_h1=h1.get("buys", 0), sells_h1=h1.get("sells", 0),
-                 socials=socials, source=meta.get("source"), boost=meta.get("boost"), url=p.get("url"), price=float(p.get("priceUsd") or 0))
+                 socials=socials, source=meta.get("source"), boost=meta.get("boost"), url=p.get("url"), price=float(p.get("priceUsd") or 0), pair=p.get("pairAddress"))
     pace = (vm5 * 12) / vh1 if vh1 else 0
     checks = [
         ("Graduated", p.get("dexId") not in BONDING_DEXES, f"trading on {p.get('dexId')}" + (" — still on the launch curve, where most rugs happen" if p.get("dexId") in BONDING_DEXES else " — it survived launch and moved to a real market")),
@@ -178,8 +178,57 @@ def open_pos(f, mint, book, style="Ladder", cost=TRADE_USD, tag=""):
             "stop": entry * (1 + (PROM_STOP if style == "Promising" else EB_STOP if style == "EarlyBird" else HARD_STOP)),
             "hist": [], "exit_reason": "", "url": f["url"]}
 
+# ---- Holders7 exit style (added 2026-10-20): the user's 7-of-20 biggest-holders rule ----
+H7_WARN, H7_EXIT, H7_HALF_AT, H7_BIG_TRADE = 3, 7, 1.00, 50
+_GT = []
+def gt_big_ledger(pool, mint):
+    """Big trades ($50+) with wallet addresses from GeckoTerminal, oldest first. Max ~6 calls/min."""
+    while len([t for t in _GT if now() - t < 60]) >= 6: time.sleep(1)
+    _GT.append(now()); del _GT[:-20]
+    try:
+        r = S.get(f"https://api.geckoterminal.com/api/v2/networks/solana/pools/{pool}/trades",
+                  params={"trade_volume_in_usd_greater_than": H7_BIG_TRADE}, timeout=20)
+        if r.status_code != 200: return None
+        out = []
+        for t in r.json().get("data") or []:
+            a = t["attributes"]; buy = a["kind"] == "buy"
+            if (a["to_token_address"] if buy else a["from_token_address"]) != mint: continue
+            out.append({"w": a["tx_from_address"], "buy": buy, "tok": float((a["to_token_amount"] if buy else a["from_token_amount"]) or 0), "tx": a["tx_hash"]})
+        return out[::-1]
+    except Exception:
+        return None
+
+def h7_setup(pos, f, mint):
+    L = gt_big_ledger(f.get("pair"), mint) if f.get("pair") else None
+    net = {}
+    for t in L or []: net[t["w"]] = net.get(t["w"], 0) + (t["tok"] if t["buy"] else -t["tok"])
+    pos["pair"] = f.get("pair"); pos["early"] = dict(sorted([(w, v) for w, v in net.items() if v > 0], key=lambda kv: -kv[1])[:20])
+    pos["seen_tx"] = [t["tx"] for t in L or []]; pos["sold_early"] = []; pos["early_sold_tok"] = {}; pos["next_h7"] = now() + 60
+
+def h7_update(pos):
+    L = gt_big_ledger(pos["pair"], pos["mint"]); pos["next_h7"] = now() + 60
+    if not L: return
+    seen = set(pos["seen_tx"])
+    for t in L:
+        if t["tx"] in seen: continue
+        pos["seen_tx"].append(t["tx"])
+        if not t["buy"] and t["w"] in pos["early"]:
+            pos["early_sold_tok"][t["w"]] = pos["early_sold_tok"].get(t["w"], 0) + t["tok"]
+            if pos["early_sold_tok"][t["w"]] >= 0.5 * pos["early"][t["w"]] and t["w"] not in pos["sold_early"]: pos["sold_early"].append(t["w"])
+    pos["seen_tx"] = pos["seen_tx"][-2000:]
+
 def manage_any(pos, price, quiet=False):
     if pos.get("style", "Ladder") == "Ladder": return manage(pos, price, quiet)
+    if pos["style"] == "Holders7":
+        if price > pos["peak"]: pos["peak"] = price
+        g = price / pos["entry"] - 1; reason = None
+        if g >= H7_HALF_AT and "half" not in pos["flags"]: pos["flags"].append("half"); sell(pos, 0.5, price, "+100%: half sold", quiet)
+        if len(pos["sold_early"]) >= H7_WARN and "warn" not in pos["flags"]: pos["flags"].append("warn"); sell(pos, 0.25, price, "3 big holders selling: sold 25%", quiet)
+        if len(pos["sold_early"]) >= H7_EXIT: reason = f"{len(pos['sold_early'])} of the 20 biggest holders sold half+"
+        elif g <= HARD_STOP: reason = "hard stop −20%"
+        elif now() - pos["opened"] > MAX_HOLD_H * 3600: reason = "24-hour limit"
+        if reason and pos["qty"] > 1e-12: sell(pos, pos["qty"] / pos["qty0"], price, reason, quiet); pos["exit_reason"] = reason
+        return pos["qty"] <= 1e-12 * pos["qty0"] + 1e-18
     if price > pos["peak"]: pos["peak"], pos["peak_t"] = price, now()
     g, gp = price / pos["entry"] - 1, pos["peak"] / pos["entry"] - 1
     pos["hist"] = (pos["hist"] + [[now(), price]])[-5:]
@@ -276,8 +325,10 @@ def scan(st):
         elif st["cash"] < TRADE_USD: why_not = "not enough practice cash"
         else:
             pos = open_pos(f, a, "practice"); st["cash"] -= TRADE_USD; st["open"].append(pos); took = True
-        for style in ("Ladder", "EarlyBird", "Promising"):
-            st["shadow_open"].append(open_pos(f, a, "shadow", style=style))
+        for style in ("Ladder", "EarlyBird", "Promising", "Holders7"):
+            sp = open_pos(f, a, "shadow", style=style)
+            if style == "Holders7": h7_setup(sp, f, a)
+            st["shadow_open"].append(sp)
         # Promising book: A-grade only
         sf = getattr(safety, "last", {})
         grade = {"buyers ≥ 2× sellers (5 min)": f["buys_m5"] >= PROM_BUY_RATIO * max(f["sells_m5"], 1),
@@ -297,6 +348,8 @@ def scan(st):
 
 def tick(st):
     allpos = st["open"] + st["shadow_open"] + st["prom_open"] + st["nm_open"]
+    for p in st["shadow_open"]:
+        if p.get("style") == "Holders7" and p.get("pair") and now() >= p.get("next_h7", 0): h7_update(p)
     if not allpos: return
     pr = prices([p["mint"] for p in allpos])
     for lst, done, practice in ((st["open"], st["closed"], True), (st["shadow_open"], st["shadow_closed"], False),
@@ -349,7 +402,7 @@ def report(st):
          f"- **Shadow log (every coin that passed, no limits):** {stats(st['shadow_closed'])}",
          f"- **Promising book ($20 start, $10 trades):** {money(st['prom_cash'])} cash + {len(st['prom_open'])} open · {stats(st['prom_closed'])}",
          f"- Scans: {st['scans']} · coins researched: {st['coins_checked']}", "", "## Same coins, different exit styles (shadow log)"] + \
-        [f"- **{sty}:** {stats([p for p in st['shadow_closed'] if p.get('style', 'Ladder') == sty])}" for sty in ("Ladder", "EarlyBird", "Promising")] + \
+        [f"- **{sty}:** {stats([p for p in st['shadow_closed'] if p.get('style', 'Ladder') == sty])}" for sty in ("Ladder", "EarlyBird", "Promising", "Holders7")] + \
         ["", "## Near-misses (safe, failed only one timing rule)"] + \
         [f"- **failed '{r}':** {stats([p for p in st['nm_closed'] if p['tag'] == r])}" for r in sorted({p['tag'] for p in st['nm_closed']})] + [
          "## Why coins were rejected"] + [f"- {k}: {v}" for k, v in sorted(st["rejects"].items(), key=lambda kv: -kv[1])]
