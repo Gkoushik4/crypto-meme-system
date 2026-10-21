@@ -1,0 +1,24 @@
+=== Copy period 2026-04-22 -> 2026-07-21 ===
+Skilled veterans found (history up to 2026-04-22): 15  -> main team 10, bench 5
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+Fill history reaches the start of the period for 13/15 traders (missing early trades: 0x0c944e, 0x288ed4)
+New trades opened by them in the copy period: 49  (coins: BTC, CASHCAT, ETH, HBAR, HEMI, HYPE, IP, LIT, PURR, SOL, VVV, XLM, ZEC)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Trade checks done in 289s
+                                    $85 -> trades wins losses win % avg win R avg loss R stand-in trades really-good (watched)
+1. Copy every trade                 $83.33     16    4     12   25%     +2.35      -0.85               0                     0
+2. + emergency pause & stand-in     $83.33     16    4     12   25%     +2.35      -0.85               0                     0
+3. + trade check                    $84.12      1    0      1    0%         -      -1.03               0                     0
+4. + really-good-only while paused  $84.12      1    0      1    0%         -      -1.03               0                     0
+Hold BTC                            $71.43                                                                                    
+
+Bad periods / stand-ins during the test: none
+Trades skipped by the check, and why: against the trend (7), too little trading volume (4), small/low-conviction trade (3), Kronos disagrees (3), unusually wild right now (1), late entry (moved 1%+ already) (1)
+Trades the check KEPT vs SKIPPED: {False: {'trades': 1, 'avg R': -1.03, 'win %': 0.0}, True: {'trades': 15, 'avg R': 0.02, 'win %': 0.27}}
+'Really good' trades found: 1, avg R +2.98, win 100%
+PART B DONE

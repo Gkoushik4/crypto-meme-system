@@ -1,0 +1,28 @@
+=== Copy period 2026-07-21 -> 2026-10-19 ===
+Skilled veterans found (history up to 2026-07-21): 15  -> main team 10, bench 5
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+/home/claude/copychecker/level3_backtest.py:41: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  if (c, iv) in cpk and cpk[(c, iv)].index[0] <= pd.Timestamp.utcnow().tz_localize(None) - pd.Timedelta(days=back - 3): continue
+Fill history reaches the start of the period for 11/15 traders (missing early trades: 0xb962d4, 0x015354, 0xf4939e, 0x31dea2)
+New trades opened by them in the copy period: 114  (coins: AAVE, BTC, CASHCAT, EIGEN, ENA, ETH, FARTCOIN, GRAM, HBAR, HYPE, KAITO, LIT, MET, MORPHO, NEAR, OP, PAXG, PENGU, PONS, PUMP, PURR, SEI, SOL, SYRUP, TRUMP, UNI, WLFI, XLM, XMR, ZEC)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Trade checks done in 171s
+                                     $85 -> trades wins losses win % avg win R avg loss R stand-in trades really-good (watched)
+1. Copy every trade                  $88.60     35    8     27   23%     +2.31      -0.56               0                     0
+2. + emergency pause & stand-in      $88.60     35    8     27   23%     +2.31      -0.56               0                     0
+3. + trade check                     $89.74      7    3      4   43%     +2.47      -0.29               0                     0
+4. + really-good-only while paused   $89.74      7    3      4   43%     +2.47      -0.29               0                     0
+Hold BTC                            $106.71                                                                                    
+
+Bad periods / stand-ins during the test: none
+Trades skipped by the check, and why: late entry (moved 1%+ already) (12), small/low-conviction trade (10), against the trend (8), too little trading volume (6), unusually wild right now (6), Kronos disagrees (5)
+Trades the check KEPT vs SKIPPED: {False: {'trades': 8, 'avg R': 0.93, 'win %': 0.5}, True: {'trades': 33, 'avg R': -0.12, 'win %': 0.15}}
+'Really good' trades found: 5, avg R +0.51, win 60%
+PART B DONE

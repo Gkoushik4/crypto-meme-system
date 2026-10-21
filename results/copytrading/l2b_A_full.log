@@ -1,0 +1,19 @@
+============================== PART A: skilled veterans, 3 periods, with vs without slow-down ==============================
+
+Period 1: pick up to 2026-01-22, copy 2026-01-22→2026-04-22  —  10 skilled traders
+  no_slowdown    $100 split → $112.09  median  +5.3%  made money  80%  worst -24%
+  with_slowdown  $100 split → $107.61  median  +5.3%  made money  80%  worst -26%
+
+Period 2: pick up to 2026-04-22, copy 2026-04-22→2026-07-21  —  10 skilled traders
+  no_slowdown    $100 split → $ 99.52  median  +0.9%  made money  50%  worst -53%
+  with_slowdown  $100 split → $ 98.51  median  -2.3%  made money  40%  worst -31%
+
+Period 3: pick up to 2026-07-21, copy 2026-07-21→2026-10-19  —  10 skilled traders
+  no_slowdown    $100 split → $103.10  median  +2.7%  made money  60%  worst -2%
+  with_slowdown  $100 split → $101.91  median  +0.8%  made money  50%  worst -3%
+
+SUMMARY A (average 90-day copy return):
+ period  n  no_slowdown  with_slowdown
+      1 10        0.121          0.076
+      2 10       -0.005         -0.015
+      3 10        0.031          0.019

@@ -1,0 +1,114 @@
+{
+ "picked_at": "2026-10-05 04:30:27.348962",
+ "main": [
+  "0xb962d4f1c7659b11498245e681e1ec3d7e1d27b2",
+  "0xb6ce51b7970cbe17f8b2680f760f5eb0c8e5fc15",
+  "0xf4939e64793fc85b68ec4ddb1697b01db3977134",
+  "0x288ed4efc8fbd1e42a06fe083ea942d20c90b336",
+  "0x0b8aa35c28b7c6ab18f11dc168f437a8a69fd4f8",
+  "0x69b05701f8175c276ecd0138387a197948e240bb",
+  "0xac5c66fbad98b49979cd1cbaa800ace76e947866",
+  "0xe0afe5de6831901db80d7ca9d17475f78b1a870c",
+  "0x0c944ef7ba8f75da6ae4499c5d1754fbc8bd5133",
+  "0x263294039413b96d25e4173a5f7599f8b3801504"
+ ],
+ "bench": [
+  "0x246f074547d510507676dcb33cf92656c3fd574c",
+  "0xec7f509c9845ae53fc9d9c0d5d10cb0ebea1fe50",
+  "0xb04d15263f8f4c41ef7d33685753431de057eae2",
+  "0x67c795c9c2ddefd7ed07fe240575a75b9a028c2f",
+  "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802"
+ ],
+ "profiles": {
+  "0xb962d4f1c7659b11498245e681e1ec3d7e1d27b2": {
+   "months": 16,
+   "profitable_months": 1.0,
+   "max_drawdown": 0.0,
+   "t_stat": 6.050979689256989
+  },
+  "0xb6ce51b7970cbe17f8b2680f760f5eb0c8e5fc15": {
+   "months": 30,
+   "profitable_months": 0.8,
+   "max_drawdown": -0.04368416329278413,
+   "t_stat": 4.13277708575213
+  },
+  "0xf4939e64793fc85b68ec4ddb1697b01db3977134": {
+   "months": 19,
+   "profitable_months": 0.7368421052631579,
+   "max_drawdown": -0.12569512095889612,
+   "t_stat": 3.546237427675928
+  },
+  "0x288ed4efc8fbd1e42a06fe083ea942d20c90b336": {
+   "months": 21,
+   "profitable_months": 0.8571428571428571,
+   "max_drawdown": -0.11439469625713894,
+   "t_stat": 3.5348529131724207
+  },
+  "0x0b8aa35c28b7c6ab18f11dc168f437a8a69fd4f8": {
+   "months": 14,
+   "profitable_months": 1.0,
+   "max_drawdown": 0.0,
+   "t_stat": 3.4893998511346376
+  },
+  "0x69b05701f8175c276ecd0138387a197948e240bb": {
+   "months": 16,
+   "profitable_months": 0.8125,
+   "max_drawdown": -0.05795310202856474,
+   "t_stat": 3.483544380198761
+  },
+  "0xac5c66fbad98b49979cd1cbaa800ace76e947866": {
+   "months": 18,
+   "profitable_months": 0.8888888888888888,
+   "max_drawdown": -0.08784917317328367,
+   "t_stat": 3.464999582583523
+  },
+  "0xe0afe5de6831901db80d7ca9d17475f78b1a870c": {
+   "months": 22,
+   "profitable_months": 0.9090909090909091,
+   "max_drawdown": -0.049918196851343466,
+   "t_stat": 3.456243921474458
+  },
+  "0x0c944ef7ba8f75da6ae4499c5d1754fbc8bd5133": {
+   "months": 27,
+   "profitable_months": 0.8518518518518519,
+   "max_drawdown": -0.015982476994690242,
+   "t_stat": 3.3674839432198564
+  },
+  "0x263294039413b96d25e4173a5f7599f8b3801504": {
+   "months": 33,
+   "profitable_months": 1.0,
+   "max_drawdown": 0.0,
+   "t_stat": 3.0680174296411833
+  },
+  "0x246f074547d510507676dcb33cf92656c3fd574c": {
+   "months": 14,
+   "profitable_months": 1.0,
+   "max_drawdown": 0.0,
+   "t_stat": 2.9895595132289876
+  },
+  "0xec7f509c9845ae53fc9d9c0d5d10cb0ebea1fe50": {
+   "months": 19,
+   "profitable_months": 0.7368421052631579,
+   "max_drawdown": -0.09822187374286351,
+   "t_stat": 2.9590942983582904
+  },
+  "0xb04d15263f8f4c41ef7d33685753431de057eae2": {
+   "months": 26,
+   "profitable_months": 0.8846153846153846,
+   "max_drawdown": -0.014322439124487718,
+   "t_stat": 2.9334519700931447
+  },
+  "0x67c795c9c2ddefd7ed07fe240575a75b9a028c2f": {
+   "months": 11,
+   "profitable_months": 0.8181818181818182,
+   "max_drawdown": -0.12425260831707874,
+   "t_stat": 2.840352670236329
+  },
+  "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802": {
+   "months": 20,
+   "profitable_months": 0.8,
+   "max_drawdown": -0.07900959094373106,
+   "t_stat": 2.8295549670798197
+  }
+ }
+}

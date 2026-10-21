@@ -1,0 +1,72 @@
+/home/claude/copychecker/l3/l3_live.py:463: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  end = pd.Timestamp.utcnow().tz_localize(None).floor("5min"); t = end - pd.Timedelta(days=days)
+/home/claude/copychecker/l3/l3_live.py:66: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  self.fill_cache[trader] = Market.fills(self, trader, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+[10-17 21:30] 0x246f…574c (bench) is in a bad period (down -10% on copied trades) → watch-only
+[10-17 22:20] 0x246f…574c (bench) recovered → back on the team
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+/home/claude/copychecker/l3/l3_live.py:71: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  Market.candles(self, coin, iv, start, pd.Timestamp.utcnow().tz_localize(None))
+                       version  account  closed trades  wins  losses win % avg win avg loss  open now
+            1 Copy every trade    86.27             14     4      10   29%  +2.10R   -0.83R         0
+2 + emergency pause & stand-in    86.27             14     4      10   29%  +2.10R   -0.83R         0
+               3 + trade check    84.39              2     0       2    0%       -   -0.61R         0
+  4 + really-good while paused    84.39              2     0       2    0%       -   -0.61R         0
+REPLAY DONE
