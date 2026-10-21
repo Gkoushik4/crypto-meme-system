@@ -1,0 +1,13 @@
+Time spent in each market type (BTC): {'CHOPPY': 78.0, 'TRENDING': 13.0, 'WILD': 9.0} %
+
+Total R by period (R = profit in units of risk; positive = made money):
+                     trades win %  total R $85 → (1% risk) worst drop  2018 crash/bear  2019 recovery  2020-21 boom  2022 crash  2023-24 recovery  2025-26
+version                                                                                                                                                   
+1 Base (all trades)    1595   28%      1.1             $74       -52%             24.3           13.3          -5.0        -0.1              30.5    -61.8
+5 Scale out            1595   49%    -53.6             $45       -64%             19.7            3.0         -15.6        -5.4              11.8    -66.9
+6 Stop-and-reverse     1976   28%      4.5             $74       -56%             32.1           24.3         -21.8         7.7              25.6    -63.4
+7 REGIME (adapts)      1105   45%     24.0            $104       -36%              6.6            9.4          21.1        -1.6              17.0    -28.5
+
+Best version per period: {'2018 crash/bear': '6 Stop-and-reverse', '2019 recovery': '6 Stop-and-reverse', '2020-21 boom': '7 REGIME (adapts)', '2022 crash': '6 Stop-and-reverse', '2023-24 recovery': '1 Base (all trades)', '2025-26': '7 REGIME (adapts)'}
+Regime beat base in 2 of 6 periods
+YEARS TEST DONE

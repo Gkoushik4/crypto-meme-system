@@ -1,0 +1,32 @@
+=== START_DAYS=180
+Fill history reaches the start of the period for 14/15 traders (missing early trades: 0x0c944e)
+New trades opened by them in the copy period: 50  (coins: BTC, CASHCAT, ETH, HBAR, HEMI, HYPE, IP, LIT, PURR, SOL, VVV, XLM, ZEC)
+                   trades taken win % total R  $85 -> worst trade R
+1 Copy every trade           16   25%    -0.8  $84.20         -1.19
+5 Scale out                  16   44%    -2.1  $83.12         -1.19
+6 Stop-and-reverse           16   38%    +0.0  $84.78         -2.40
+7 REGIME (adapts)             7   29%    -2.6  $82.75         -2.09
+Market regime when trades came in: {'CHOPPY': 14, 'TRENDING': 2}
+REGIME TEST DONE
+=== START_DAYS=90
+Fill history reaches the start of the period for 11/15 traders (missing early trades: 0xb962d4, 0x015354, 0xf4939e, 0x31dea2)
+New trades opened by them in the copy period: 110  (coins: AAVE, BTC, CASHCAT, EIGEN, ENA, ETH, FARTCOIN, HBAR, HYPE, LIT, MET, MORPHO, NEAR, OP, PAXG, PENGU, PONS, PUMP, PURR, SEI, SOL, SYRUP, TRUMP, UNI, WLFI, XLM, XMR, ZEC)
+                   trades taken win % total R  $85 -> worst trade R
+1 Copy every trade           36   22%    +5.3  $89.40         -1.32
+5 Scale out                  36   69%   +11.6  $95.22         -1.32
+6 Stop-and-reverse           36   33%    +6.0  $89.83         -2.63
+7 REGIME (adapts)            26   69%    +5.4  $89.63         -0.66
+Market regime when trades came in: {'CHOPPY': 28, 'WILD': 5, 'TRENDING': 3}
+REGIME TEST DONE
+=== START_DAYS=14
+Fill history reaches the start of the period for 14/15 traders (missing early trades: 0x246f07)
+New trades opened by them in the copy period: 53  (coins: APEX, BTC, ETH, HBAR, HYPE, PUMP, PURR, ZEC)
+                   trades taken win % total R  $85 -> worst trade R
+1 Copy every trade           14   29%    -1.8  $83.41         -1.32
+5 Scale out                  14   50%    -1.6  $83.57         -1.32
+6 Stop-and-reverse           14   36%    -4.9  $80.79         -2.72
+7 REGIME (adapts)             9   44%    -1.3  $83.91         -0.66
+Market regime when trades came in: {'CHOPPY': 14}
+REGIME TEST DONE
+
+[exited with code 0]

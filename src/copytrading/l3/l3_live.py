@@ -9,6 +9,7 @@ import numpy as np, pandas as pd, requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rules as R
+import regime as RG
 
 HERE = Path(__file__).resolve().parent
 DATA = Path(os.environ.get("L3_DATA", HERE / "data")); DATA.mkdir(parents=True, exist_ok=True)
@@ -264,7 +265,7 @@ def close_card(cs, checks_ok, fails, team):
 
 # ============================ the engine ============================
 VERSIONS = ["1 Copy every trade", "2 + emergency pause & stand-in", "3 + trade check", "4 + really-good while paused",
-            "5 Copy every trade + scale out", "6 Copy every trade + stop-and-reverse"]   # 5 & 6 added 2026-10-20 (winners of the flip test)
+            "5 Copy every trade + scale out", "6 Copy every trade + stop-and-reverse", "7 REGIME (adapts to the market)"]   # 5 & 6 added 2026-10-20 (winners of the flip test)
 
 class Engine:
     def __init__(self, mk, team, state_file):
@@ -317,14 +318,14 @@ class Engine:
                 if c:
                     c["version"] = book_name; book["cash"] += c["pnl"]; book["closed"].append(c)
                     closes.setdefault(c["sig_id"], []).append(c)
-                    if book_name.startswith("6") and c["why"] == "stop-loss" and not c.get("reversed"):   # version 6: flip once
+                    if (book_name.startswith("6") or (book_name.startswith("7") and c.get("rev_ok"))) and c["why"] == "stop-loss" and not c.get("reversed"):
                         c1 = self.mk.candles(c["coin"], "1h", now - pd.Timedelta(days=30), now)
                         rs = {"id": c["sig_id"], "trader": c["trader"], "coin": c["coin"], "dir": -c["dir"]}
                         if len(still) < R.MAX_OPEN and len(c1) >= 50:
                             rp = open_position(rs, c["exit"], c1, pd.Timestamp(c["closed"]), book["cash"], 1.0)
                             if rp:
                                 rp["reversed"] = True; still.append(rp)
-                                self.card(f"### ↩️ v6 stop-and-reverse: {c['coin']} {'long' if c['dir'] == 1 else 'short'} was stopped out — flipped to "
+                                self.card(f"### ↩️ v{book_name[0]} stop-and-reverse: {c['coin']} {'long' if c['dir'] == 1 else 'short'} was stopped out — flipped to "
                                           f"{'short' if c['dir'] == 1 else 'long'} at {fmt(c['exit'])} (one flip only)", now, "entry")
                 else: still.append(p)
             book["open"] = still
@@ -381,11 +382,16 @@ class Engine:
         shadow = open_position(sig, px_now, c1, now, 1.0, 1.0)
         if shadow: self.st["shadow"].append(shadow)
         is_main = a in self.team["main"]; paused = self.health(a)["paused"]
+        b4 = self.mk.candles("BTC", "4h", now - pd.Timedelta(days=160), now)
+        reg, side = RG.regime_at(RG.label_series(b4), now) if len(b4) > 400 else (None, 0)
+        r_take, r_size, r_exits, r_rev, r_why = RG.decide(reg, side, d)
         is_sub = a in self.st["subs"].values()
         decisions, plan = {}, None
         for v in VERSIONS:
             book = self.st["books"][v]; w = 1.0
-            if v[0] in "156":
+            if v.startswith("7"):
+                take, why = (is_main and r_take), (r_why if is_main else "bench traders only trade as stand-ins")
+            elif v[0] in "156":
                 take, why = is_main, "copies every main-team trade" if is_main else "bench traders only trade as stand-ins"
             else:
                 if is_main and not paused: take, why = True, "trader is in good form"
@@ -399,8 +405,9 @@ class Engine:
             if take and len(book["open"]) >= R.MAX_OPEN: take, why = False, f"already {R.MAX_OPEN} trades open"
             if take and any(p["coin"] == coin and p["dir"] == d for p in book["open"]): take, why = False, "already in this trade"
             if take:
-                p = open_position(sig, px_now, c1, now, book["cash"], w)
-                if p and v.startswith("5"): p["scale"] = True
+                p = open_position(sig, px_now, c1, now, book["cash"], r_size if v.startswith("7") else w)
+                if p and (v.startswith("5") or (v.startswith("7") and r_exits == "scale_out")): p["scale"] = True
+                if p and v.startswith("7"): p["rev_ok"] = r_rev; p["regime"] = reg
                 if p: book["open"].append(p); plan = plan or p
                 else: take, why = False, "not enough price data for a stop"
             decisions[v] = (take, why)

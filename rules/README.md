@@ -10,3 +10,4 @@
 - 2026-10-20 Early Bird: account ran out of money (day 0.7) → tracking mode to keep collecting data.
 - 2026-10-20 Main meme test: added the 7-of-20 biggest-holders exit as a 4th exit style (shadow log on every coin). Main's practice account rules unchanged.
 - 2026-10-20 Crypto Level 3: added version 5 (scale out: half at +1R) and version 6 (stop-and-reverse, one flip). Versions 1-4 unchanged. Live run moved to GitHub Actions (every ~5 min), results in results/copytrading_live/.
+- 2026-10-20 Market regime detector (src/copytrading/regime.py, frozen): TRENDING / CHOPPY / WILD from BTC 4h. Tested on 8.75 years of BTC+ETH: total +24R vs +1.1R base, worst drop -36% vs -52%; mixed on copy-trade periods. Added to the live run as version 7. Scale-out alone was the worst version over the years (-53.6R): kept in the live test for data, flagged.
