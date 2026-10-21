@@ -1,5 +1,5 @@
 # 🧭 Crypto & Meme System — live practice
-*Started 2026-10-21 10:03 UTC · updated 2026-10-21 19:09 UTC · pretend money*
+*Started 2026-10-21 10:03 UTC · updated 2026-10-21 19:14 UTC · pretend money*
 
 - **Safe side (85%):** $84.76 (started $85) · **Moonshot side (15%):** $9.04 (started $15)
 - Open positions: 1
@@ -15,10 +15,10 @@
 | 💱 forex/bonds | 0 | 0 | +0.00 | 0 |
 
 ## Why trades were skipped (top 12)
-- new meme: Graduated: 411
-- new meme: Enough money in the pool: 406
-- new meme: New (present-day): 67
-- new meme: Busy: 26
+- new meme: Graduated: 418
+- new meme: Enough money in the pool: 412
+- new meme: New (present-day): 70
+- new meme: Busy: 27
 - new meme: Attention growing: 16
 - new meme: Not late: 5
 - new meme: More buyers than sellers: 1
