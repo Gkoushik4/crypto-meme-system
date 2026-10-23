@@ -399,8 +399,6 @@ def scan(st):
         if (now() - EB.iso(a["pool_created_at"])) / 3600 > B_MAX_AGE_H: continue
         mint = p["relationships"]["base_token"]["data"]["id"].split("_", 1)[1]
         ingest(st, pool, mint, EB.ledger(pool, mint, big=True), f0(a.get("base_token_price_usd")), f0(a.get("reserve_in_usd")), sym=a["name"].split(" / ")[0]); fed += 1
-    if EB.trades_today(st) >= EB.TRADES_PER_DAY:      # week 2: daily limit — keep learning wallets, stop looking for buys
-        st["rejects"]["Daily trade limit reached (not buying)"] = st["rejects"].get("Daily trade limit reached (not buying)", 0) + 1; pools = []
     for p in pools:
         pool = p["attributes"]["address"]
         if now() < st["seen"].get(pool, 0) or any(x["pool"] == pool for x in st["open"]): continue
@@ -449,6 +447,8 @@ def open_trade(st, pool, C, F, path, tr, BL, fast=False):
         st["open"].append(pos); st["cash"] -= TRADE_USD; took = True
         if rr:      # same coin, safer blend, tracked side by side (no money)
             sh = new_pos(F, path, tr, mode="rug_blend", shadow=True); sh["parent"] = pos["id"]; st.setdefault("shadow", []).append(sh)
+    if not took and sum(1 for x in st.setdefault("shadow", []) if x.get("missed")) < 6:     # MISSED tracker: follow the coin we skipped
+        sh = new_pos(F, path, tr, shadow=True); sh["missed"] = why; st["shadow"].append(sh)
     rr_txt = (f"\n\n**⚠️ RUG-RISK MODE:** {', '.join(pos['rug_why'])} → sell 75% at +150%, the rest at +200% "
               f"(the safer blend is tracked side by side)") if took and pos.get("rug_why") else ("\n\n**Normal-risk coin:** standard v2 profit lock." if took else "")
     card(buy_card(F, C, path, tr, stxt, took, why) + rr_txt); print(f"[{ts()}] v2 BUY{' ⚡LIVE' if fast else ''} {F['sym']} path {path} pros {len(tr)} took={took}", flush=True)
@@ -594,7 +594,8 @@ def report(st):
         f"- **Trades with pros in the coin:** {line([p for p in cl if p['trusted']])}",
         f"- **Normal-risk coins (standard profit lock):** {line([p for p in cl if p.get('mode') == 'normal'])}",
         f"- **Rug-risk coins — your version (75% at +150%, rest at +200%):** {line([p for p in cl if p.get('mode') == 'rug_user'])}",
-        f"- **Rug-risk coins — safer blend (same coins, tracked side by side):** {line(st.get('shadow_closed', []))}",
+        f"- **Rug-risk coins — safer blend (same coins, tracked side by side):** {line([p for p in st.get('shadow_closed', []) if not p.get('missed')])}",
+        f"- **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** {line([p for p in st.get('shadow_closed', []) if p.get('missed')])}",
         f"- **🚀 +100% trades:** {len(big)} so far (≈{len(big) / max(days, 0.01) * 30:.0f} per month at this pace)",
         (f"- ⚠️ Account ran out of money at {st['ran_out']} — continuing in tracking mode." if st.get("ran_out") else ""),
         live_line(st),

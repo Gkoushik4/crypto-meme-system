@@ -3,15 +3,19 @@ Entry: coins minutes old with a real crowd buying, video-style (Axiom) filters, 
 Exit: free-ride at +100%, tightening trailing stop, early-buyer watch (3 sell -> 25%, 7 sell -> all), danger exits.
 Data: GeckoTerminal (every buy/sell with wallet). Rules FIXED 2026-10-19 before the test.  Run: python earlybird.py run SECONDS
 WEEK 2 (2026-10-23) fixes from the week-1 lessons (see lessons.md): real costs, max 5 trades/day, coin must be 45 min-4 h old,
-no buying the top, known-dumper check, pool-money alarm, holder sells only count after we bought, flippers aren't 'holders'."""
+no buying the top, known-dumper check, pool-money alarm, holder sells only count after we bought, flippers aren't 'holders'.
+2026-10-23 later: LIVE insider exits (Solana live feed, ~1 s): creator / biggest holders / known dumpers selling or pool money
+dropping -> sell, filled ~1 s after the signal. MISSED tracker: coins that passed but were skipped (daily limit / 2 open) are
+followed with the same rules, so we can see what the limits cost."""
 import sys, json, time, datetime as dt
 from pathlib import Path
 from collections import defaultdict, deque
 import requests
 import lessons
+import fastfeed as FF
 
 # ============================ RULES (frozen) ============================
-START_CASH, TRADE_USD, MAX_OPEN, MAX_SHADOW = 15.0, 5.0, 2, 0
+START_CASH, TRADE_USD, MAX_OPEN, MAX_SHADOW = 15.0, 5.0, 2, 6   # shadow = MISSED tracker (coins we skipped)
 TEST_DAYS = 7
 DEXES = {"pump-fun", "pumpswap"}
 MIN_AGE_MIN, MAX_AGE_MIN = 45, 240                       # week 2: crashes happened in coins < 1 h old
@@ -46,10 +50,16 @@ STATE = DATA / "state.json"
 S = requests.Session(); S.headers["Accept"] = "application/json"
 now = time.time
 CALLS = deque()
+_ST, _BUSY = [None], [False]
 
 def get(path, params=None):
     for k in range(4):
         while len(CALLS) >= 12 and now() - CALLS[0] < 60:          # shares the free limit (~30/min) with v2
+            if FEED and _ST[0] is not None and not _BUSY[0]:          # keep handling live exits while we wait
+                _BUSY[0] = True
+                try: live_process(_ST[0])
+                except Exception: pass
+                finally: _BUSY[0] = False
             time.sleep(1);
             while CALLS and now() - CALLS[0] >= 60: CALLS.popleft()
         while CALLS and now() - CALLS[0] >= 60: CALLS.popleft()
@@ -168,7 +178,7 @@ def new_pos(F, book):
     return {"book": book, "pool": F["pool"], "mint": F["mint"], "sym": F["sym"], "opened": now(), "entry": e,
             "qty0": (TRADE_USD * (1 - DEX_FEE) - NET_FEE) / e, "qty": None, "cost": TRADE_USD, "realized": 0.0,
             "peak": e, "peak_t": now(), "stop": e * (1 + HARD_STOP), "early": F["early"], "dev": F["dev"], "sold_early": [],
-            "flags": [], "reserve0": F["reserve"], "seen_tx": list(F["seen_tx"]), "bad_checks": 0, "hist": [], "log": []}
+            "flags": [], "reserve0": F["reserve"], "seen_tx": list(F["seen_tx"]), "bad_checks": 0, "hist": [], "log": [], "mkt0": F["price"]}
 
 def sell(p, share, price, why, quiet):
     q = min(p["qty"], p["qty0"] * share)
@@ -282,8 +292,6 @@ def trades_today(st):
 
 def scan(st):
     st["scans"] += 1
-    if trades_today(st) >= TRADES_PER_DAY and len(st["open"]) >= 0:
-        st["rejects"]["Daily trade limit reached (not scanning)"] = st["rejects"].get("Daily trade limit reached (not scanning)", 0) + 1; return
     pools, seen_now = [], set()
     for path, prm in (("/trending_pools", {"duration": "5m", "include": "base_token,dex"}), ("/new_pools", {"include": "base_token,dex"})):
         for p in (get(path, prm) or {}).get("data") or []:
@@ -311,7 +319,8 @@ def scan(st):
             if st["cash"] < TRADE_USD and not st.get("ran_out"):
                 st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"   # account would be out of money here
             st["open"].append(new_pos(F, "practice")); st["cash"] -= TRADE_USD; took = True
-        if len(st["sh_open"]) < MAX_SHADOW: st["sh_open"].append(new_pos(F, "shadow"))
+        if not took and len(st["sh_open"]) < MAX_SHADOW:            # MISSED tracker
+            sh = new_pos(F, "shadow"); sh["missed"] = why; st["sh_open"].append(sh)
         card(buy_card(F, C, took, why)); print(f"[{ts()}] BUY {F['sym']} fdv {money(F['fdv'])} took={took}", flush=True)
     st["seen"] = {k: v for k, v in st["seen"].items() if v > now()}
 
@@ -323,6 +332,7 @@ def tick(st):
         L = ledger(pool, ps[0]["mint"], big=True)
         for p in ps:
             practice = p["book"] == "practice"
+            if p.get("pending_out") or p not in (st["open"] if practice else st["sh_open"]): continue
             if not info:
                 p.setdefault("gone", now())
                 if now() - p["gone"] > 1800:
@@ -331,10 +341,67 @@ def tick(st):
                 done = True
             else:
                 p.pop("gone", None); done = manage(p, info, L, quiet=not practice)
-            if done:
-                (st["closed"] if practice else st["sh_closed"]).append(p)
-                (st["open"] if practice else st["sh_open"]).remove(p)
-                if practice: st["cash"] += p["realized"]; card(close_card(p)); print(f"[{ts()}] CLOSED {p['sym']} {p['realized'] / p['cost'] - 1:+.0%}", flush=True)
+            if done: close_pos(st, p)
+
+def close_pos(st, p):
+    practice = p["book"] == "practice"; SIGS.pop(id(p), None)
+    if p not in (st["open"] if practice else st["sh_open"]): return
+    (st["closed"] if practice else st["sh_closed"]).append(p)
+    (st["open"] if practice else st["sh_open"]).remove(p)
+    if practice: st["cash"] += p["realized"]; card(close_card(p)); print(f"[{ts()}] CLOSED {p['sym']} {p['realized'] / p['cost'] - 1:+.0%}", flush=True)
+
+# ============================ live feed (insider feature) ============================
+LIVE, REACTION_S, DUMPER_SELL_USD = True, 1.0, 50
+FEED, SIGS, SOL = None, {}, {"v": 0, "t": 0}
+def sol_usd():
+    if now() - SOL["t"] > 600:
+        try:
+            d = S.get("https://api.dexscreener.com/tokens/v1/solana/So11111111111111111111111111111111111111112", timeout=10).json()
+            v = sorted(f0(x["priceUsd"]) for x in d if x.get("quoteToken", {}).get("symbol") in ("USDC", "USDT"))
+            if v: SOL.update(v=v[len(v) // 2], t=now())
+        except Exception: pass
+    return SOL["v"] or 150.0
+
+def live_process(st):
+    allp = st["open"] + st["sh_open"]
+    FEED.want({x for p in allp for x in (p["pool"], p["mint"])})
+    ev = [e for e in FEED.drain() if e["k"] == "trade"]
+    sol = sol_usd(); D = lessons.dumpers(); ls = st.setdefault("live_stats", {"live_exits": 0, "insider_exits": 0})
+    for e in ev:
+        for p in allp:
+            if not ((e["mint"] and e["mint"] == p["mint"]) or (e["pool"] and e["pool"] == p["pool"])) or p.get("live_bad") or not e["px_sol"]: continue
+            sg = SIGS.setdefault(id(p), set())
+            if e["sig"] in sg: continue
+            sg.add(e["sig"])
+            if p.get("scale") is None:
+                sc = p.get("mkt0", p["entry"] / (1 + SLIP)) / e["px_sol"]
+                if not (0.5 * sol < sc < 2 * sol): p["live_bad"] = True; continue
+                p["scale"], p["pool_sol_peak"] = sc, e["pool_sol"]
+            p["live"] = {"price": e["px_sol"] * p["scale"], "t": e["got"]}; p["pool_sol_peak"] = max(p["pool_sol_peak"], e["pool_sol"])
+            if e["buy"] or e["got"] < p["opened"] or e["sig"] in p["seen_tx"] or p.get("pending_out"): continue
+            p["seen_tx"].append(e["sig"])
+            usd = e["sol"] * sol; why = None
+            if p["dev"] and e["w"] == p["dev"]: why = "creator wallet sold (live)"
+            elif e["w"] in D and usd >= DUMPER_SELL_USD: why = f"known dumper sold {money(usd)} (live) — {D[e['w']][:60]}"
+            elif e["w"] in p["early"]:
+                sold = p.setdefault("early_sold_tok", {}); sold[e["w"]] = sold.get(e["w"], 0) + e["tok"]
+                if sold[e["w"]] >= 0.5 * p["early"][e["w"]] and e["w"] not in p["sold_early"]: p["sold_early"].append(e["w"])
+                if len(p["sold_early"]) >= EXIT_SELLERS: why = f"{len(p['sold_early'])} of the 20 biggest holders sold (live)"
+            if not why and e["pool_sol"] < (1 - RESERVE_DROP) * p["pool_sol_peak"]: why = f"pool money down {1 - e['pool_sol'] / p['pool_sol_peak']:.0%} (live drain warning)"
+            if why:
+                p["pending_out"] = [why, now()]; p["log"].append(f"{ts()} ⚡ {why} — selling (fill ~1 s later)")
+                if p["book"] == "practice": card(f"### ⚡ {p['sym']}: live insider exit — {why}")
+    for p in list(allp):                                       # honest fill ~1 s after the signal
+        if not p.get("pending_out"): continue
+        why, t0 = p["pending_out"]; lv = p.get("live")
+        if now() - t0 >= REACTION_S and ((lv and lv["t"] >= t0 + REACTION_S) or now() - t0 > 4):
+            if p["qty"] is None: p["qty"] = p["qty0"]
+            if p["qty"] > 0: sell(p, p["qty"] / p["qty0"], lv["price"] if lv else p.get("last_good") or p["entry"], why + " (filled ~1 s later)", p["book"] != "practice")
+            p["why"] = why; p.pop("pending_out")
+            if p["book"] == "practice":
+                ls["live_exits"] += 1; ls["insider_exits"] += ("creator" in why or "holders" in why or "dumper" in why)
+            if "drain" in why or "dumper" in why or "creator" in why: lessons.learn("earlybird", p["sold_early"] + [p["dev"]], f"sold into the {p['sym']} crash (live, {ts()})")
+            close_pos(st, p)
 
 def report(st):
     def stats(cl):
@@ -347,22 +414,30 @@ def report(st):
         f"- **Practice account ($15 start):** {money(st['cash'])} cash + {len(st['open'])} open",
         f"- **Practice trades:** {stats(st['closed'])}",
         (f"- ⚠️ **The $15 account ran out of money at {st['ran_out']}.** Trading continues in TRACKING MODE (balance can go below $0) so we keep collecting data." if st.get("ran_out") else ""),
+        f"- **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** {stats(st['sh_closed'])}",
+        (f"- ⚡ **Live insider exits:** feed {'connected' if FEED and FEED.stats['connected'] else 'off'} · delay ≈{(FEED.lag() or 0) if FEED else 0:.1f} s · "
+         f"live exits {st.get('live_stats', {}).get('live_exits', 0)} (creator/holders/dumper: {st.get('live_stats', {}).get('insider_exits', 0)})"),
         f"- Scans {st['scans']} · coins checked {st['checked']}", "", "## Why coins were skipped"] +
         [f"- {k}: {v}" for k, v in sorted(st["rejects"].items(), key=lambda kv: -kv[1])] +
         (["", "## Gaps"] + [f"- {g}" for g in st["gaps"]] if st["gaps"] else []))
     (DATA / "report.md").write_text(txt); return txt
 
 def run(seconds):
+    global FEED
     st = load()
+    if LIVE: FEED = FF.Feed()
+    _ST[0] = st
     if st.get("alive") and now() - st["alive"] > 900: st["gaps"].append(f"{ts(st['alive'])} → {ts()} UTC")
-    end = min(now() + seconds, st["started"] + TEST_DAYS * 86400); last = 0
+    end = min(now() + seconds, st["started"] + TEST_DAYS * 86400); last = last_tick = last_save = 0
     while now() < end:
         try:
-            tick(st)                                               # positions checked every ~20 s
+            if now() - last_tick >= 20: tick(st); last_tick = now()   # positions checked every ~20 s (+ live feed every second)
             if now() - last >= 60: scan(st); last = now()
+            if FEED: live_process(st)
         except Exception as e: print("error:", repr(e), flush=True)
-        st["alive"] = now(); STATE.write_text(json.dumps(st)); report(st)
-        time.sleep(20)
+        st["alive"] = now()
+        if now() - last_save >= 20: STATE.write_text(json.dumps(st)); report(st); last_save = now()
+        time.sleep(1 if FEED else 20)
     STATE.write_text(json.dumps(st)); print(report(st))
     if now() >= st["started"] + TEST_DAYS * 86400: print("WEEK DONE")
 
