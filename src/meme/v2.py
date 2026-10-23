@@ -5,13 +5,17 @@
   scam alarms (staircase bot pattern, pool money dropping, creator selling); fake-price guard; 5-second price checks.
 Rules fixed 2026-10-20 before the v2 test.  Run: python v2.py run SECONDS
 WEEK 2 (2026-10-23): uses the fixed Early Bird entry checks + max 5 trades/day, holder sells only count after we bought,
-crashes teach the shared dumper list (lessons.py). The wallet scorebook carries over from week 1."""
+crashes teach the shared dumper list (lessons.py). The wallet scorebook carries over from week 1.
+LIVE FEED (2026-10-23, insider feature): Solana's free live feed shows trades ~1 s after they happen. v2 watches the trusted
+pro wallets (instant Early Pro alarm) and the coins it holds (instant exit when insiders / the creator / known dumpers sell,
+or the pool starts draining). Honest fills: a live exit sells at the price ~1 second AFTER the signal."""
 import sys, json, time, statistics
 from pathlib import Path
 from collections import deque, defaultdict
 import requests
 import earlybird as EB
 import lessons
+import fastfeed as FF
 
 # ============================ RULES (frozen) ============================
 START_CASH, TRADE_USD, MAX_OPEN, TEST_DAYS = 30.0, 10.0, 2, 7
@@ -22,9 +26,10 @@ MIN_COINS, PRO_WIN, PRO_PNL, MAX_RUG_SHARE, MAX_FIRSTBLOCK, MIN_HOLD_MIN = 5, 0.
 EARLY_HIT_X, EARLY_SHARE = 2.0, 0.50           # coin later reached 2x their buy price in >=50% of their coins
 TOP_PRO_PNL = 5000
 CONVICTION, BIG_WALLET_USD = 0.10, 5000        # bet >=10% of wallet, or wallet >= $5k
-COLLECT_HOURS, REVISIT_MIN, MAX_REVISITS_PER_MIN = 6, 30, 4
+COLLECT_HOURS, REVISIT_MIN, MAX_REVISITS_PER_MIN = 6, 30, 6   # week 2: learn wallets faster (was 4)
 # entry B (smart money)
-B_MIN_TRUSTED, B_WINDOW_MIN, B_MAX_AGE_H = 2, 30, 6
+B_MIN_TRUSTED, B_WINDOW_MIN, B_MAX_AGE_H = 2, 10, 6      # week 2: EARLY PRO — 2+ trusted wallets bought in the last 10 min
+B_MAX_CHG_M5 = 30                                       # early pro entry: no buying after a +30% 5-min spike
 # exits
 HARD_STOP, STEP1_AT, STEP1, STEP2_AT, STEP2, FLOOR = -0.25, 0.50, 0.25, 1.00, 0.25, 0.40
 POOL_DROP, DRAINED = 0.20, 0.30
@@ -33,6 +38,13 @@ SELL_PRESSURE_CHECKS = 6
 MAX_HOLD_H = 12
 STAIR_N, STAIR_GREEN, STAIR_MAX_DIP, STAIR_VOL_CV = 24, 0.85, 0.05, 0.35
 SLIP, FEE, NET_FEE = EB.SLIP, EB.DEX_FEE, EB.NET_FEE
+# live feed (insider feature)
+LIVE, LOOP_S, REACTION_S = True, 1, 1.0        # check the live feed every second; live exits fill ~1 s after the signal
+MAX_PRO_WATCH = 100                            # trusted wallets watched live
+DUMPER_SELL_USD = 50                           # a known dumper selling $50+ of our coin -> insider exit
+CRASH_SELLER_SOL = 0.5                         # sellers of 0.5+ SOL in the 3 min before a drain are learned as dumpers
+FEED = None
+SIGS = {}                                      # live-feed trades already counted, per position (kept out of the save file)
 # rug-risk mode (added 2026-10-20, user's idea): high rug-risk coins sell faster at big gains
 RR_POOL_VS_VALUE, RR_TOP10, RR_CREATOR, RR_SOFT_STAIR = 0.15, 0.25, 0.01, (0.75, 0.08)
 RUG_USER = [(1.50, 0.75), (2.00, 1.00)]                 # user's version: +150% sell 75%, +200% sell the rest
@@ -53,7 +65,7 @@ def gget(path, params=None):
         while True:
             while CALLS and now() - CALLS[0] >= 60: CALLS.popleft()
             if len(CALLS) < GT_RATE: break
-            time.sleep(0.5)
+            idle()                                     # keep handling the live feed while we wait for the data limit
         CALLS.append(now())
         try:
             r = S.get(EB.API + path, params=params, timeout=20)
@@ -63,6 +75,17 @@ def gget(path, params=None):
         except Exception: time.sleep(3 * (k + 1))
     return None
 EB.get = gget
+_IN_LIVE = [False]
+def idle():
+    """Waiting for the slow data limit: keep watching the live feed so live exits never wait (no re-entry)."""
+    if FEED and not _IN_LIVE[0] and _ST[0] is not None:
+        _IN_LIVE[0] = True
+        try: live_process(_ST[0])
+        except Exception as ex: print("live error:", repr(ex), flush=True)
+        finally: _IN_LIVE[0] = False
+    time.sleep(0.5)
+_ST = [None]
+
 def budget(n):
     while CALLS and now() - CALLS[0] >= 60: CALLS.popleft()
     return len(CALLS) + n <= GT_RATE
@@ -206,7 +229,8 @@ def new_pos(F, path, trusted, mode="normal", shadow=False):
             "stop": e * (1 + HARD_STOP), "flags": [], "log": [], "early": F.get("early", {}), "dev": F.get("dev"),
             "sold_early": [], "early_sold_tok": {}, "trusted": {w: {"tok": v["tok"], "top": v["top"]} for w, v in trusted.items()},
             "trusted_sold": [], "seen_tx": list(F.get("seen_tx", []))[-2000:], "liq_peak": F.get("reserve", 0), "last_good": None,
-            "jump_n": 0, "pressure": 0, "next_holders": now(), "next_stair": now() + 60}
+            "jump_n": 0, "pressure": 0, "next_holders": now(), "next_stair": now() + 60,
+            "mkt0": F["price"], "scale": None, "pool_sol0": None, "liq_ref": F.get("reserve", 0), "recent_sellers": [], "live_n": 0}
 
 def sell(p, share, price, why, practice=True):
     q = min(p["qty"], p["qty0"] * share)
@@ -225,13 +249,18 @@ def manage(st, p, d):
     price, liq = d["price"], d["liq"]
     p["liq_peak"] = max(p["liq_peak"], liq)
     def out(why):
+        if d.get("live") and not p.get("shadow"):        # live signal: we'd really sell ~1 s later, at THAT price
+            if not p.get("pending_out"): p["pending_out"] = [why, now()]; p["log"].append(f"{ts()} ⚡ live signal: {why} — selling (fill ~1 s later)")
+            return False
         if p["qty"] > 0: sell(p, p["qty"] / p["qty0"], price, why)
         p["why"] = why; return True
     # 1) drained pool: coins can't be sold
     if liq < max(1000, DRAINED * p["liq_peak"]):
         p["log"].append(f"{ts()} pool drained ({money(liq)} left, was {money(p['liq_peak'])}) — rug: remaining coins worth $0")
         card(f"### 🚨 v2 {p['sym']}: POOL DRAINED — remaining coins worth $0"); p["qty"] = 0; p["why"] = "pool drained (rug)"
-        if not p.get("shadow"): lessons.learn("v2", p["sold_early"] + [p["dev"]], f"sold into the {p['sym']} crash (live, {ts()})")
+        if not p.get("shadow"):
+            crash_sellers = [w for t, w, sol in p.get("recent_sellers", []) if now() - t < 180 and sol >= CRASH_SELLER_SOL]
+            lessons.learn("v2", p["sold_early"] + [p["dev"]] + crash_sellers, f"sold into the {p['sym']} crash (live, {ts()})")
         return True
     # 2) fake-price guard
     if p["last_good"] and price > 2 * p["last_good"]:
@@ -255,6 +284,7 @@ def manage(st, p, d):
                 if lvl >= 0.5: p["stop"] = max(p["stop"], p["entry"] * (1.03 if lvl < 1.5 else 1 + FLOOR))
         if p["qty"] <= p["qty0"] * 1e-9: p["why"] = "rug-risk mode: all sold at target"; return True
     if p.get("dev_sold"): return out("creator wallet sold")
+    if p.get("dumper_sold"): return out(f"known dumper wallet sold our coin — insider exit ({p['dumper_sold']})")
     # 4) the pros
     pros_holding = [w for w in p["trusted"] if w not in p["trusted_sold"]]
     if p["trusted"]:
@@ -279,14 +309,20 @@ def holders_update(st, p):
     p["seen_tx"] = (p["seen_tx"] + [t["tx"] for t in new])[-3000:]
     for t in new:
         if t["buy"] or t["t"] < p["opened"] - 5: continue          # week 2: sells from before we bought don't count
-        if t["w"] == p["dev"]: p["dev_sold"] = True
-        if t["w"] in p["early"]:
-            p["early_sold_tok"][t["w"]] = p["early_sold_tok"].get(t["w"], 0) + t["tok"]
-            if p["early_sold_tok"][t["w"]] >= 0.5 * p["early"][t["w"]] and t["w"] not in p["sold_early"]: p["sold_early"].append(t["w"])
-        if t["w"] in p["trusted"]:
-            tr = p["trusted"][t["w"]]; tr["sold"] = tr.get("sold", 0) + t["tok"]
-            if tr["sold"] >= 0.5 * tr["tok"] and t["w"] not in p["trusted_sold"]:
-                p["trusted_sold"].append(t["w"]); p["log"].append(f"{ts()} trusted wallet {t['w'][:6]}… sold half+ of its coins")
+        apply_sell(p, t["w"], t["tok"], t["usd"])
+
+def apply_sell(p, w, tok, usd):
+    if w == p["dev"]: p["dev_sold"] = True
+    if w in p["early"]:
+        p["early_sold_tok"][w] = p["early_sold_tok"].get(w, 0) + tok
+        if p["early_sold_tok"][w] >= 0.5 * p["early"][w] and w not in p["sold_early"]: p["sold_early"].append(w)
+    if w in p["trusted"]:
+        tr = p["trusted"][w]; tr["sold"] = tr.get("sold", 0) + tok
+        if tr["sold"] >= 0.5 * tr["tok"] and w not in p["trusted_sold"]:
+            p["trusted_sold"].append(w); p["log"].append(f"{ts()} trusted wallet {w[:6]}… sold half+ of its coins")
+    D = lessons.dumpers()
+    if w in D and usd >= DUMPER_SELL_USD and not p.get("dumper_sold"):
+        p["dumper_sold"] = f"{w[:6]}… — {D[w]}"; p["log"].append(f"{ts()} known dumper {w[:6]}… sold {money(usd)} of our coin")
 
 # ============================ cards ============================
 def wallet_lines(tr):
@@ -296,7 +332,7 @@ def wallet_lines(tr):
             f"({v.get('conv', 0):.0%} of wallet{' — high conviction' if v.get('conv', 0) >= CONVICTION else ''})" for w, v in tr.items()]
 
 def buy_card(F, C, path, tr, stair_txt, took, why):
-    L = [f"## 🦅 v2 BUY ({'A: Early Bird filters' if path == 'A' else 'B: smart money'}): {F['sym']}",
+    L = [f"## 🦅 v2 BUY ({'A: Early Bird filters' if path == 'A' else 'B: EARLY PRO — following trusted wallets'}): {F['sym']}",
          f"*{ts()} UTC · pretend money · [chart](https://www.geckoterminal.com/solana/pools/{F['pool']})*", "",
          f"- {F['age']:.0f} min old · worth {money(F['fdv'])} · {money(F['reserve'])} in the pool", "", "### Checks"]
     L += [f"- ✅ **{n}:** {w}" for n, ok, w in C] + [f"- ✅ **Not a staircase bot pattern:** {stair_txt}", "", "### Pros & early wallets in this coin"]
@@ -321,27 +357,28 @@ def load():
     return {"started": now(), "cash": START_CASH, "open": [], "closed": [], "coins": {}, "wallets": {}, "seen": {},
             "traded_syms": {}, "rejects": {}, "scans": 0, "checked": 0, "gaps": [], "ran_out": None}
 
-def safety_only(st, p):
+def safety_only(st, p, tr_override=None):
     """Entry B: the rug/safety parts of Early Bird, without the crowd/volume rules."""
     a = p["attributes"]; pool = a["address"]; mint = p["relationships"]["base_token"]["data"]["id"].split("_", 1)[1]
     age_h = (now() - EB.iso(a["pool_created_at"])) / 3600
     if age_h > B_MAX_AGE_H or f0(a.get("reserve_in_usd")) < EB.MIN_RESERVE: return None
     BL = EB.ledger(pool, mint, big=True)
     ingest(st, pool, mint, BL, f0(a.get("base_token_price_usd")), f0(a.get("reserve_in_usd")), sym=a["name"].split(" / ")[0])
-    tr = trusted_in(st, pool, BL, window_min=B_WINDOW_MIN)
+    tr = tr_override if tr_override is not None else trusted_in(st, pool, BL, window_min=B_WINDOW_MIN)
     strong = [w for w, v in tr.items() if v["conv"] >= CONVICTION or v["wallet"] >= BIG_WALLET_USD]
     if len(tr) < B_MIN_TRUSTED or not strong: return None
     # run the Early Bird rug/safety checks with the crowd/volume/size/late rules switched off
-    keep = {k: getattr(EB, k) for k in ("MIN_VOL_M5", "MIN_VOL_H1", "MIN_FDV", "MAX_FDV", "MIN_BUYERS_M5", "BUYER_RATIO", "MAX_CHG_M5", "MAX_AGE_MIN")}
+    keep = {k: getattr(EB, k) for k in ("MIN_VOL_M5", "MIN_VOL_H1", "MIN_FDV", "MAX_FDV", "MIN_BUYERS_M5", "BUYER_RATIO", "MAX_CHG_M5", "MAX_AGE_MIN", "MIN_AGE_MIN", "DIP_FROM_HIGH")}
     try:
         EB.MIN_VOL_M5 = EB.MIN_VOL_H1 = EB.MIN_FDV = EB.MIN_BUYERS_M5 = EB.BUYER_RATIO = 0
-        EB.MAX_FDV, EB.MAX_CHG_M5, EB.MAX_AGE_MIN = 1e12, 1e9, B_MAX_AGE_H * 60
+        EB.MAX_FDV, EB.MAX_CHG_M5, EB.MAX_AGE_MIN = 1e12, B_MAX_CHG_M5, B_MAX_AGE_H * 60
+        EB.MIN_AGE_MIN, EB.DIP_FROM_HIGH = 0, 0          # early pro: may be < 45 min old and buy right after the pros (dumper + rug checks still apply)
         C, F, L = EB.evaluate(p, set())
     finally:
         for k, v in keep.items(): setattr(EB, k, v)
     if L is None: return None
-    C = [c for c in C if c[0] not in ("Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)", "Not too late")]
-    C.append(("Smart money is in", True, f"{len(tr)} trusted wallets bought in the last {B_WINDOW_MIN} min, {len(strong)} with real money / a big bet"))
+    C = [c for c in C if c[0] not in ("Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)")]
+    C.append(("Early Pro: smart money is in", True, f"{len(tr)} trusted wallets bought in the last {B_WINDOW_MIN} min, {len(strong)} with real money / a big bet"))
     return C, F, L, tr
 
 def scan(st):
@@ -350,13 +387,14 @@ def scan(st):
     for path, prm in (("/trending_pools", {"duration": "5m", "include": "base_token,dex"}), ("/new_pools", {"include": "base_token,dex"})):
         for p in (gget(path, prm) or {}).get("data") or []:
             if p["attributes"]["address"] not in seen_now: seen_now.add(p["attributes"]["address"]); pools.append(p)
-    trusted_known = sum(1 for w in list(st["wallets"])[:20000] if profile(st, w)) if st["scans"] % 10 == 1 else st.get("n_trusted", 0)
+    if st["scans"] % 10 == 1 or "trusted_list" not in st: refresh_trusted(st)
+    trusted_known = len(st["trusted_list"])
     st["n_trusted"] = trusted_known
     b_checks = 0
     fed = 0
     for p in pools:                                  # feed the scorebook with real coins (not only the ones we buy)
         a = p["attributes"]; pool = a["address"]
-        if fed >= 3 or not budget(4): break
+        if fed >= 5 or not budget(4): break                # week 2: 5 coins per scan (was 3)
         if pool in st["coins"] or f0(a.get("reserve_in_usd")) < EB.MIN_RESERVE: continue
         if (now() - EB.iso(a["pool_created_at"])) / 3600 > B_MAX_AGE_H: continue
         mint = p["relationships"]["base_token"]["data"]["id"].split("_", 1)[1]
@@ -376,37 +414,136 @@ def scan(st):
             BL = EB.ledger(pool, F["mint"], big=True)
             ingest(st, pool, F["mint"], BL, F["price"], F["reserve"], sym=F["sym"])
             path = "A"
-        elif trusted_known >= 5 and b_checks < 3 and set(fails) <= {"Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)", "Not too late"}:
+        elif trusted_known >= 5 and b_checks < 5 and set(fails) <= {"Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)", "Not too late",
+                                                                   "Survived launch (45 min – 4 h old)", "Not buying the top"}:
             b_checks += 1; res = safety_only(st, p)
             if res: C, F, L, tr = res; path = "B"
         if path is None:
             for n in fails: st["rejects"][n] = st["rejects"].get(n, 0) + 1
             st["seen"][pool] = now() + 600; continue
-        if now() - st["traded_syms"].get(F["sym"].lower(), 0) < 86400:
-            st["seen"][pool] = now() + 86400; continue
-        if path == "A": tr = trusted_in(st, pool, BL or [])
-        hit, stxt, sgreen, sdip = staircase(pool, raw=True)
-        if hit:
-            st["rejects"]["Staircase bot pattern"] = st["rejects"].get("Staircase bot pattern", 0) + 1; st["seen"][pool] = now() + 86400; continue
-        dp = dex_prices([F["mint"]]).get(F["mint"])
-        if not dp or abs(dp["price"] / F["price"] - 1) > 0.05:
-            st["rejects"]["Two price sources disagree"] = st["rejects"].get("Two price sources disagree", 0) + 1; st["seen"][pool] = now() + 600; continue
-        st["seen"][pool] = now() + 86400; st["traded_syms"][F["sym"].lower()] = now()
-        took, why = False, ""
-        if len(st["open"]) >= MAX_OPEN: why = f"already {MAX_OPEN} open"
-        elif EB.trades_today(st) >= EB.TRADES_PER_DAY: why = f"daily limit ({EB.TRADES_PER_DAY} trades in 24 h) — costs add up"
-        else:
-            if st["cash"] < TRADE_USD and not st["ran_out"]: st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"
-            F["dev_hold"] = F.get("dev_hold")
-            rr = rug_risk(F, sgreen, sdip)
-            pos = new_pos(F, path, tr, mode="rug_user" if rr else "normal"); pos["rug_why"] = rr
-            st["open"].append(pos); st["cash"] -= TRADE_USD; took = True
-            if rr:      # same coin, safer blend, tracked side by side (no money)
-                sh = new_pos(F, path, tr, mode="rug_blend", shadow=True); sh["parent"] = pos["id"]; st.setdefault("shadow", []).append(sh)
-        rr_txt = (f"\n\n**⚠️ RUG-RISK MODE:** {', '.join(pos['rug_why'])} → sell 75% at +150%, the rest at +200% "
-                  f"(the safer blend is tracked side by side)") if took and pos.get("rug_why") else ("\n\n**Normal-risk coin:** standard v2 profit lock." if took else "")
-        card(buy_card(F, C, path, tr, stxt, took, why) + rr_txt); print(f"[{ts()}] v2 BUY {F['sym']} path {path} pros {len(tr)} took={took}", flush=True)
+        open_trade(st, pool, C, F, path, tr, BL)
     st["seen"] = {k: v for k, v in st["seen"].items() if v > now()}
+
+def open_trade(st, pool, C, F, path, tr, BL, fast=False):
+    """Final checks + buy (shared by the normal scan and the live pro alarm)."""
+    if now() - st["traded_syms"].get(F["sym"].lower(), 0) < 86400:
+        st["seen"][pool] = now() + 86400; return
+    if path == "A": tr = trusted_in(st, pool, BL or [])
+    if fast: C = C + [("⚡ Live pro alarm", True, f"seen on the live feed ~{FEED.lag() or 1:.0f} s after the pros bought")]
+    hit, stxt, sgreen, sdip = staircase(pool, raw=True)
+    if hit:
+        st["rejects"]["Staircase bot pattern"] = st["rejects"].get("Staircase bot pattern", 0) + 1; st["seen"][pool] = now() + 86400; return
+    dp = dex_prices([F["mint"]]).get(F["mint"])
+    if not dp or abs(dp["price"] / F["price"] - 1) > 0.05:
+        st["rejects"]["Two price sources disagree"] = st["rejects"].get("Two price sources disagree", 0) + 1; st["seen"][pool] = now() + 600; return
+    if fast: F["price"] = max(F["price"], dp["price"])          # honest: pros' buys push the price up — pay the higher of the two prices
+    st["seen"][pool] = now() + 86400; st["traded_syms"][F["sym"].lower()] = now()
+    took, why = False, ""
+    if len(st["open"]) >= MAX_OPEN: why = f"already {MAX_OPEN} open"
+    elif EB.trades_today(st) >= EB.TRADES_PER_DAY: why = f"daily limit ({EB.TRADES_PER_DAY} trades in 24 h) — costs add up"
+    else:
+        if st["cash"] < TRADE_USD and not st["ran_out"]: st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"
+        F["dev_hold"] = F.get("dev_hold")
+        rr = rug_risk(F, sgreen, sdip)
+        pos = new_pos(F, path, tr, mode="rug_user" if rr else "normal"); pos["rug_why"] = rr
+        st["open"].append(pos); st["cash"] -= TRADE_USD; took = True
+        if rr:      # same coin, safer blend, tracked side by side (no money)
+            sh = new_pos(F, path, tr, mode="rug_blend", shadow=True); sh["parent"] = pos["id"]; st.setdefault("shadow", []).append(sh)
+    rr_txt = (f"\n\n**⚠️ RUG-RISK MODE:** {', '.join(pos['rug_why'])} → sell 75% at +150%, the rest at +200% "
+              f"(the safer blend is tracked side by side)") if took and pos.get("rug_why") else ("\n\n**Normal-risk coin:** standard v2 profit lock." if took else "")
+    card(buy_card(F, C, path, tr, stxt, took, why) + rr_txt); print(f"[{ts()}] v2 BUY{' ⚡LIVE' if fast else ''} {F['sym']} path {path} pros {len(tr)} took={took}", flush=True)
+    if took: st.setdefault("live_stats", {}).setdefault("fast_entries", 0); st["live_stats"]["fast_entries"] += bool(fast)
+
+def refresh_trusted(st):
+    pr = [(w, profile(st, w)) for w in st["wallets"]]
+    st["trusted_list"] = [w for w, x in sorted(((w, x) for w, x in pr if x), key=lambda kv: -kv[1]["pnl"])]; st["n_trusted"] = len(st["trusted_list"])
+
+# ============================ live feed (insider feature) ============================
+def live_watch(st):
+    coins = set()
+    for p in st["open"]: coins |= {p["mint"], p["pool"]}
+    FEED.want(set(st.get("trusted_list", [])[:MAX_PRO_WATCH]) | coins)
+
+def live_process(st):
+    ev = FEED.drain(); ls = st.setdefault("live_stats", {"pro_buys": 0, "alarms": 0, "fast_entries": 0, "live_exits": 0, "insider_exits": 0})
+    if not ev and not any(p.get("pending_out") for p in st["open"]): return
+    sol = sol_price(); trusted = set(st.get("trusted_list", [])[:MAX_PRO_WATCH]); pb = st.setdefault("pro_buys", {})
+    for e in ev:
+        if e["k"] != "trade": continue
+        if e["w"] in trusted and e["buy"]:
+            pb.setdefault(e["mint"] or e["pool"], []).append([e["got"], e["w"], e["tok"], e["sol"] * sol]); ls["pro_buys"] = ls.get("pro_buys", 0) + 1
+        for p in st["open"]:
+            if (e["mint"] and e["mint"] == p["mint"]) or (e["pool"] and e["pool"] == p["pool"]): live_update(p, e, sol)
+    # honest live fills + live management
+    for p in list(st["open"]):
+        lv = p.get("live")
+        if p.get("pending_out"):
+            why, t0 = p["pending_out"]
+            if now() - t0 >= REACTION_S and ((lv and lv["t"] >= t0 + REACTION_S) or now() - t0 > 4):
+                price = lv["price"] if lv else p["last_good"] or p["entry"]
+                if p["qty"] > 0: sell(p, p["qty"] / p["qty0"], price, why + " (live, filled ~1 s later)")
+                p["why"] = why; p.pop("pending_out"); ls["live_exits"] = ls.get("live_exits", 0) + 1
+                if "insider" in why or "creator" in why or "holders" in why or "trusted" in why: ls["insider_exits"] = ls.get("insider_exits", 0) + 1
+                close_pos(st, p)
+            continue
+        if lv and lv["t"] > p.get("live_used", 0):
+            p["live_used"] = lv["t"]
+            liq = p["liq_ref"] * lv["pool_sol"] / p["pool_sol0"] if p.get("pool_sol0") else p["liq_peak"]
+            if manage(st, p, {"price": lv["price"], "liq": liq, "buys": p.get("ds_buys", 1), "sells": p.get("ds_sells", 0), "live": True}): close_pos(st, p)
+    # pro alarm: 2+ trusted wallets bought the same coin in the last 10 minutes
+    for k in list(pb):
+        pb[k] = [x for x in pb[k] if now() - x[0] < B_WINDOW_MIN * 60]
+        if not pb[k]: pb.pop(k); continue
+        if len({x[1] for x in pb[k]}) >= B_MIN_TRUSTED and now() - st.setdefault("pro_tried", {}).get(k, 0) > 600:
+            st["pro_tried"][k] = now(); ls["alarms"] = ls.get("alarms", 0) + 1
+            try: fast_early_pro(st, k, pb[k])
+            except Exception as ex: print("pro alarm error:", repr(ex), flush=True)
+    st["pro_tried"] = {k: v for k, v in st.get("pro_tried", {}).items() if now() - v < 3600}
+
+def live_update(p, e, sol):
+    if p.get("live_bad") or not e["px_sol"]: return
+    sg = SIGS.setdefault(p["id"], set())
+    if e["sig"] in sg: return
+    sg.add(e["sig"])
+    if p["scale"] is None:                                      # first live trade: tie the live price to the known dollar price
+        s = p["mkt0"] / e["px_sol"]
+        if not (0.5 * sol < s < 2 * sol): p["live_bad"] = True; p["log"].append(f"{ts()} live feed: unusual pool layout — using normal checks only"); return
+        p["scale"], p["pool_sol0"], p["liq_ref"] = s, e["pool_sol"], p["liq_peak"]
+    p["live"] = {"price": e["px_sol"] * p["scale"], "t": e["got"], "pool_sol": e["pool_sol"]}; p["live_n"] += 1
+    if e["got"] >= p["opened"] and e["sig"] not in p["seen_tx"]:
+        p["seen_tx"].append(e["sig"])
+        if not e["buy"]:
+            p["recent_sellers"] = (p["recent_sellers"] + [[e["got"], e["w"], e["sol"]]])[-300:]
+            apply_sell(p, e["w"], e["tok"], e["sol"] * sol)
+
+def close_pos(st, p):
+    SIGS.pop(p["id"], None)
+    if p in st["open"]:
+        st["open"].remove(p); st["closed"].append(p); st["cash"] += p["realized"]; card(close_card(p))
+        print(f"[{ts()}] v2 CLOSED {p['sym']} {p['realized'] / p['cost'] - 1:+.0%}", flush=True)
+
+def fast_early_pro(st, key, buys):
+    if len(st["open"]) >= MAX_OPEN or EB.trades_today(st) >= EB.TRADES_PER_DAY: return
+    if any(key in (x["mint"], x["pool"]) for x in st["open"]): return
+    if key.endswith("pump"):                                   # pump.fun coin address
+        pools = ((gget(f"/tokens/{key}/pools", {"include": "base_token,dex"}) or {}).get("data") or [])[:1]
+    else:                                                       # PumpSwap pool address
+        one = (gget(f"/pools/{key}", {"include": "base_token,dex"}) or {}).get("data"); pools = [one] if one else []
+    if not pools: return
+    pobj = pools[0]
+    if "relationships" not in pobj: return
+    tr = {}
+    for t0, w, tok, usd in buys:
+        pr = profile(st, w, exclude_pool=pobj["attributes"]["address"])
+        if not pr: continue
+        x = tr.setdefault(w, dict(pr, tok=0.0, bet=0.0)); x["tok"] += tok; x["bet"] += usd
+    if len(tr) < B_MIN_TRUSTED: return
+    bal = wallet_usd(list(tr))
+    for w in tr: u = bal.get(w, 0); tr[w]["wallet"] = u; tr[w]["conv"] = tr[w]["bet"] / (u + tr[w]["bet"]) if (u + tr[w]["bet"]) else 0
+    res = safety_only(st, pobj, tr_override=tr)
+    if not res: st["rejects"]["Live pro alarm: failed safety/insider checks"] = st["rejects"].get("Live pro alarm: failed safety/insider checks", 0) + 1; return
+    C, F, L, tr = res
+    open_trade(st, pobj["attributes"]["address"], C, F, "B", tr, None, fast=True)
 
 def tick(st):
     sh = st.setdefault("shadow", [])
@@ -417,19 +554,29 @@ def tick(st):
         if x is not None and manage(st, p, x): sh.remove(p); st.setdefault("shadow_closed", []).append(p)
     for p in list(st["open"]):
         if now() >= p["next_holders"]: holders_update(st, p); p["next_holders"] = now() + HOLDERS_EVERY
+        if p not in st["open"] or p.get("pending_out"): continue      # closed / being sold by the live feed meanwhile
         if now() >= p["next_stair"]:
             hit, txt = staircase(p["pool"]); p["next_stair"] = now() + STAIR_EVERY
             if hit and "staircase" not in p["flags"]: p["flags"].append("staircase"); p["log"].append(f"{ts()} staircase alarm: {txt}")
+        if p not in st["open"] or p.get("pending_out"): continue
         x = d.get(p["mint"])
+        if x is not None: p["ds_buys"], p["ds_sells"] = x["buys"], x["sells"]
+        if p.get("pending_out"): continue                   # a live exit is being filled
         if x is None:
             p.setdefault("gone", now())
             if now() - p["gone"] < 600: continue
             p["qty"] = 0; p["why"] = "price disappeared (rug)"; done = True
         else:
             p.pop("gone", None); done = manage(st, p, x)
-        if done:
-            st["open"].remove(p); st["closed"].append(p); st["cash"] += p["realized"]; card(close_card(p))
-            print(f"[{ts()}] v2 CLOSED {p['sym']} {p['realized'] / p['cost'] - 1:+.0%}", flush=True)
+        if done: close_pos(st, p)
+
+def live_line(st):
+    if not FEED: return "- ⚡ Live feed: off"
+    ls = st.get("live_stats", {})
+    return (f"- ⚡ **Live feed (insider feature):** {'connected' if FEED.stats['connected'] else 'reconnecting'} · delay ≈{(FEED.lag() or 0):.1f} s · "
+            f"watching {FEED.stats['subs']} wallets/coins · pro buys seen {ls.get('pro_buys', 0)} · pro alarms {ls.get('alarms', 0)} · "
+            f"live Early Pro buys {ls.get('fast_entries', 0)} · live exits {ls.get('live_exits', 0)} (insider/creator/pro sells: {ls.get('insider_exits', 0)}) · "
+            f"known dumpers {len(lessons.dumpers())}")
 
 def report(st):
     cl = st["closed"]; r = [p["realized"] / p["cost"] - 1 for p in cl]
@@ -443,13 +590,14 @@ def report(st):
         f"- **Practice account ($30 start, $10 trades):** {money(st['cash'])} cash + {len(st['open'])} open",
         f"- **All trades:** {line(cl)}",
         f"- **Early Bird entries (A):** {line([p for p in cl if p['path'] == 'A'])}",
-        f"- **Smart-money entries (B):** {line([p for p in cl if p['path'] == 'B'])}",
+        f"- **Early Pro entries (B: 2+ trusted wallets bought in the last 10 min, may be < 45 min old):** {line([p for p in cl if p['path'] == 'B'])}",
         f"- **Trades with pros in the coin:** {line([p for p in cl if p['trusted']])}",
         f"- **Normal-risk coins (standard profit lock):** {line([p for p in cl if p.get('mode') == 'normal'])}",
         f"- **Rug-risk coins — your version (75% at +150%, rest at +200%):** {line([p for p in cl if p.get('mode') == 'rug_user'])}",
         f"- **Rug-risk coins — safer blend (same coins, tracked side by side):** {line(st.get('shadow_closed', []))}",
         f"- **🚀 +100% trades:** {len(big)} so far (≈{len(big) / max(days, 0.01) * 30:.0f} per month at this pace)",
         (f"- ⚠️ Account ran out of money at {st['ran_out']} — continuing in tracking mode." if st.get("ran_out") else ""),
+        live_line(st),
         f"- Scorebook: {len(st['wallets'])} wallets seen across {len(st['coins'])} coins · trusted pro/early wallets: {st.get('n_trusted', 0)}",
         f"- Scans {st['scans']} · coins checked {st['checked']}", "", "## Why coins were skipped"] +
         [f"- {k}: {v}" for k, v in sorted(st["rejects"].items(), key=lambda kv: -kv[1])] +
@@ -457,17 +605,29 @@ def report(st):
     (DATA / "report.md").write_text(txt); return txt
 
 def run(seconds):
+    global FEED
     st = load()
+    if LIVE: FEED = FF.Feed(); refresh_trusted(st)
+    _ST[0] = st
+    for p in st["open"]: p.setdefault("mkt0", p["entry"] / (1 + SLIP)); p.setdefault("scale", None); p.setdefault("pool_sol0", None)
+    for k, v in (("liq_ref", 0), ("recent_sellers", []), ("live_n", 0)):
+        for p in st["open"]: p.setdefault(k, v)
+    last_tick = last_watch = 0
     if st.get("alive") and now() - st["alive"] > 900: st["gaps"].append(f"{ts(st['alive'])} → {ts()} UTC")
     end = min(now() + seconds, st["started"] + TEST_DAYS * 86400); last_scan = last_save = 0
     while now() < end:
         try:
-            tick(st)
+            if FEED:
+                if now() - last_watch >= 5: live_watch(st); last_watch = now()
+                _IN_LIVE[0] = True
+                try: live_process(st)
+                finally: _IN_LIVE[0] = False
+            if now() - last_tick >= PRICE_EVERY: tick(st); last_tick = now()
             if now() - last_scan >= SCAN_EVERY: scan(st); collect(st); last_scan = now()
         except Exception as e: print("error:", repr(e), flush=True)
         st["alive"] = now()
         if now() - last_save > 60: STATE.write_text(json.dumps(st)); report(st); last_save = now()
-        time.sleep(PRICE_EVERY)
+        time.sleep(LOOP_S if FEED else PRICE_EVERY)
     STATE.write_text(json.dumps(st)); print(report(st))
     if now() >= st["started"] + TEST_DAYS * 86400: print("WEEK DONE")
 
