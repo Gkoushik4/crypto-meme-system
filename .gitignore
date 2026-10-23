@@ -7,3 +7,6 @@ secrets*
 src/meme/data/
 src/meme/data_*/
 __pycache__/
+results/meme_main/state.json
+results/earlybird/state.json
+results/v2/state.json
