@@ -1,14 +1,14 @@
 # 🎯 Launch-snipe practice (insider feature) — day 0.7 of 7
-*Updated 2026-10-23 20:52:45 UTC · pretend money*
+*Updated 2026-10-23 21:24:48 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈3.9 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 23116 · passed insider checks: 1312 (6%) · no trades after our signal: 53
+- **Live feed:** connected · delay ≈2.6 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 24865 · passed insider checks: 1384 (6%) · no trades after our signal: 53
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.15 cash + 0 open · 5 trades · 0 wins (0%) · avg -11% · best -8% · worst -17% · +100% trades 0 · total -2.85 on $5 trades
 - **SAMPLE (every coin that passed):** 60 trades · 13 wins (22%) · avg -5% · best +162% · worst -70% · +100% trades 2 · total -14.04 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 30 trades · 6 wins (20%) · avg -8% · best +135% · worst -58% · +100% trades 1 · total -12.70 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $16.26 cash + 0 open · 1 trades · 1 wins (100%) · avg +25% · best +25% · worst +25% · +100% trades 0 · total +1.26 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 1 trades · 1 wins (100%) · avg +25% · best +25% · worst +25% · +100% trades 0 · total +1.26 on $5 trades
-- Final Stretch: 3 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 89 graduations seen)
+- Final Stretch: 3 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 100 graduations seen)
 
 - Known dumpers: 162 (grows with every dump we see)
 
@@ -23,10 +23,10 @@
 - INSIDER EXIT: creator sold: 9 trades, +15.19
 
 ## Why launches were skipped
-- Not a serial launcher: 19785
-- Not a copycat name: 19202
-- Creator bought ≤ 5%: 6166
-- Creator isn't a known dumper: 1679
+- Not a serial launcher: 21297
+- Not a copycat name: 20695
+- Creator bought ≤ 5%: 6678
+- Creator isn't a known dumper: 1713
 - FS: First buyers mostly holding: 1
 
 ## Gaps
