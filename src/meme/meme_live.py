@@ -32,7 +32,8 @@ PROM_STOP, PROM_HALF_AT, PROM_SELL2_AT, PROM_SELL2, PROM_TRAIL = -0.30, 1.00, 2.
 EB_STOP, EB_BE, EB_FREE, EB_SPIKE, EB_STALL_MIN, EB_MAX_H = -0.25, 0.50, 1.00, 0.50, 30, 6
 NEAR_MISS_RULES = {"Attention growing", "More buyers than sellers", "Not late", "Busy"}
 # costs (honest): slippage + DEX fee per side, plus network fee per transaction
-SLIP, DEX_FEE, NET_FEE_USD = 0.01, 0.0025, 0.02
+SLIP, DEX_FEE, NET_FEE_USD = 0.01, 0.018, 0.03          # week 2: real costs — Axiom ~1% + PumpSwap ~0.5-1% (bigger coins) per side, network fee
+TRADES_PER_DAY = 5                                       # week 2: max practice trades per 24 h
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data"; DATA.mkdir(exist_ok=True)
@@ -322,6 +323,7 @@ def scan(st):
         st["seen"][a] = now() + COOLDOWN_H * 3600
         took, why_not = False, ""
         if len(st["open"]) >= MAX_OPEN: why_not = f"already {MAX_OPEN} coins open"
+        elif sum(1 for x in st["open"] + st["closed"] if now() - x["opened"] < 86400) >= TRADES_PER_DAY: why_not = f"daily limit ({TRADES_PER_DAY} trades in 24 h)"
         elif st["cash"] < TRADE_USD: why_not = "not enough practice cash"
         else:
             pos = open_pos(f, a, "practice"); st["cash"] -= TRADE_USD; st["open"].append(pos); took = True
@@ -396,7 +398,7 @@ def report(st):
         return (f"{len(r)} trades · {len(w)} wins ({len(w) / len(r):.0%}) · average {sum(r) / len(r):+.1%} per trade · "
                 f"best {max(r):+.0%} · worst {min(r):+.0%} · total {sum(p['realized'] - p['cost'] for p in cl):+.2f} on {money(TRADE_USD)} trades")
     days = (now() - st["started"]) / 86400
-    L = [f"# 🐸 Meme practice — day {days:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
+    L = [f"# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day {days:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
          f"- **Practice account ($15 start):** {money(st['cash'])} cash + {len(st['open'])} open coin(s)",
          f"- **Practice trades:** {stats(st['closed'])}",
          f"- **Shadow log (every coin that passed, no limits):** {stats(st['shadow_closed'])}",

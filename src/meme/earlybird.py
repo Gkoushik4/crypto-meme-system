@@ -1,22 +1,28 @@
 """EARLY BIRD — practice (pretend money) momentum trading on brand-new Solana meme coins.
 Entry: coins minutes old with a real crowd buying, video-style (Axiom) filters, rug checks (top 10 wallets < 35%).
 Exit: free-ride at +100%, tightening trailing stop, early-buyer watch (3 sell -> 25%, 7 sell -> all), danger exits.
-Data: GeckoTerminal (every buy/sell with wallet). Rules FIXED 2026-10-19 before the test.  Run: python earlybird.py run SECONDS"""
+Data: GeckoTerminal (every buy/sell with wallet). Rules FIXED 2026-10-19 before the test.  Run: python earlybird.py run SECONDS
+WEEK 2 (2026-10-23) fixes from the week-1 lessons (see lessons.md): real costs, max 5 trades/day, coin must be 45 min-4 h old,
+no buying the top, known-dumper check, pool-money alarm, holder sells only count after we bought, flippers aren't 'holders'."""
 import sys, json, time, datetime as dt
 from pathlib import Path
 from collections import defaultdict, deque
 import requests
+import lessons
 
 # ============================ RULES (frozen) ============================
 START_CASH, TRADE_USD, MAX_OPEN, MAX_SHADOW = 15.0, 5.0, 2, 0
 TEST_DAYS = 7
 DEXES = {"pump-fun", "pumpswap"}
-MAX_AGE_MIN = 120
+MIN_AGE_MIN, MAX_AGE_MIN = 45, 240                       # week 2: crashes happened in coins < 1 h old
+TRADES_PER_DAY = 5                                       # week 2: ~6% costs per trade -> trade less
+DIP_FROM_HIGH, HIGH_WINDOW_MIN = 0.08, 15                # week 2: buy >=8% under the last 15-min high (not the top)
+MIN_HOLDER_AGE_MIN = 3                                   # week 2: wallets that bought < 3 min ago are flippers, not holders
 MIN_VOL_M5, MIN_VOL_H1 = 10_000, 25_000                  # video: minimum volume
 MIN_FDV, MAX_FDV = 30_000, 2_000_000                     # video: minimum market cap (early, not huge)
 MIN_RESERVE = 10_000
 MIN_BUYERS_M5, BUYER_RATIO = 40, 1.5                     # the crowd
-MAX_CHG_M5 = 40                                          # already +40% in 5 min = too late
+MAX_CHG_M5 = 15                                          # week 2 (was 40): already +15% in 5 min = too late
 MIN_AVG_TRADE, MAX_TOP5_VOLUME = 15, 0.60                # real traders, not bot spam (video: "global fees paid")
 MAX_TOP10_HOLD, MAX_DEV_HOLD, MAX_BUNDLE = 0.35, 0.05, 3 # rug checks
 NEED_SOCIALS = True
@@ -30,7 +36,7 @@ SPIKE, SPIKE_SELL = 0.50, 0.25                           # +50% within ~2 min ->
 STALL_MIN, STALL_SELL = 30, 0.50                         # no new high 30 min -> sell half
 RESERVE_DROP = 0.20
 SELLERS_WIN_CHECKS = 3
-SLIP, DEX_FEE, NET_FEE = 0.02, 0.0125, 0.02              # new coins: wider slippage, pump fees ~1.25%
+SLIP, DEX_FEE, NET_FEE = 0.01, 0.022, 0.03               # week 2: real costs — Axiom ~1% + PumpSwap ~1-1.25% per side, ~1% price drift, network fee
 
 API = "https://api.geckoterminal.com/api/v2/networks/solana"
 HERE = Path(__file__).resolve().parent
@@ -99,7 +105,7 @@ def evaluate(p, mints_traded_24h):
              chg_m5=f0(chg.get("m5")), chg_h1=f0(chg.get("h1")))
     C = []
     def chk(name, ok, why): C.append((name, bool(ok), why)); return ok
-    ok = chk("Brand new", dex in DEXES and age <= MAX_AGE_MIN, f"{age:.0f} minutes old on {dex}")
+    ok = chk("Survived launch (45 min – 4 h old)", dex in DEXES and MIN_AGE_MIN <= age <= MAX_AGE_MIN, f"{age:.0f} minutes old on {dex}" + (" — too fresh: most crashes happen in the first hour" if age < MIN_AGE_MIN else ""))
     ok &= chk("Busy (video: min volume)", F["vol_m5"] >= MIN_VOL_M5 and F["vol_h1"] >= MIN_VOL_H1,
               f"{money(F['vol_m5'])} traded in 5 min, {money(F['vol_h1'])} in the hour")
     ok &= chk("Size (video: min market cap)", MIN_FDV <= fdv <= MAX_FDV, f"worth {money(fdv)} — {'early, room to grow' if MIN_FDV <= fdv <= MAX_FDV else 'too tiny' if fdv < MIN_FDV else 'already big'}")
@@ -114,6 +120,8 @@ def evaluate(p, mints_traded_24h):
     lp = L[-1]["p"]; fresh = now() - L[-1]["t"] < 180 and price and abs(lp / price - 1) < 0.10
     if not chk("Live price data", fresh, f"last trade {now() - L[-1]['t']:.0f}s ago at {px(lp)} vs listed {px(price)}"): return C, F, None
     F["price"] = lp
+    hi = max([t["p"] for t in L if now() - t["t"] <= HIGH_WINDOW_MIN * 60] or [lp])
+    if not chk("Not buying the top", lp <= hi * (1 - DIP_FROM_HIGH), f"price is {1 - lp / hi:.0%} under the last {HIGH_WINDOW_MIN}-min high (need {DIP_FROM_HIGH:.0%}+)"): return C, F, None
     supply = fdv / price if price else 1e9
     net, bought = defaultdict(float), defaultdict(float)
     for t in L:
@@ -143,7 +151,13 @@ def evaluate(p, mints_traded_24h):
     if not ok: return C, F, None
     BL = ledger(pool, mint, big=True); bnet = defaultdict(float)
     for t in BL: bnet[t["w"]] += t["tok"] if t["buy"] else -t["tok"]
-    early = {w: v for w, v in sorted(bnet.items(), key=lambda kv: -kv[1])[:20] if v > 0}   # 20 biggest big-wallet holders when we buy
+    first_buy = {}
+    for t in BL:
+        if t["buy"]: first_buy.setdefault(t["w"], t["t"])
+    early = {w: v for w, v in sorted(((w, v) for w, v in bnet.items() if now() - first_buy.get(w, now()) >= MIN_HOLDER_AGE_MIN * 60),
+                                     key=lambda kv: -kv[1])[:20] if v > 0}   # 20 biggest real holders (held 3+ min) when we buy
+    okd, dtxt = lessons.dumper_check(list(early) + [dev] if dev else list(early))
+    if not chk("No known dumpers among the biggest holders", okd, dtxt): return C, F, None
     last_big = BL[-1]["tx"] if BL else None
     F.update(top10=top10, dev=dev, dev_hold=dev_hold, early=early, seen_tx=[t["tx"] for t in BL] + [t["tx"] for t in L], socials=so, avg=avg)
     return C, F, L
@@ -175,6 +189,7 @@ def manage(p, info, L, quiet):
             p["log"].append(f"{ts()} pool drained (money in pool {money(reserve)}, was up to {money(p['reserve_peak'])}) — rug: remaining coins worth $0")
             if not quiet: card(f"### 🚨 {p['sym']}: POOL DRAINED (rug) — remaining coins worth $0")
             p["qty"] = 0; p["why"] = "pool drained (rug)"
+            lessons.learn("earlybird", p["sold_early"] + [p["dev"]], f"sold into the {p['sym']} crash (live, {ts()})")
         return True
     # FAKE-PRICE GUARD: a jump of more than 2x since the last check is not trusted until it holds for 3 checks (~1 min)
     # while the pool keeps at least half its money. Draining pools show fake spikes — we never sell at those.
@@ -192,8 +207,8 @@ def manage(p, info, L, quiet):
     if price > p["peak"]: p["peak"], p["peak_t"] = price, now()
     gp = p["peak"] / p["entry"] - 1
     # new trades since last check
-    seen = set(p["seen_tx"]); new = [t for t in L if t["tx"] not in seen]
-    p["seen_tx"] = (p["seen_tx"] + [t["tx"] for t in new])[-1500:]
+    seen = set(p["seen_tx"]); new = [t for t in L if t["tx"] not in seen and t["t"] >= p["opened"] - 5]   # only sells AFTER we bought
+    p["seen_tx"] = (p["seen_tx"] + [t["tx"] for t in L if t["tx"] not in seen])[-1500:]
     sold = p.setdefault("early_sold_tok", {})
     for t in new:
         if not t["buy"] and t["w"] in p["early"]:
@@ -208,6 +223,7 @@ def manage(p, info, L, quiet):
     # danger: everything out
     out = None
     if dev_sold: out = "creator wallet sold (rug warning)"
+    elif reserve < (1 - RESERVE_DROP) * p["reserve_peak"]: out = f"pool money down {1 - reserve / p['reserve_peak']:.0%} from its peak (drain warning)"
     elif len(p["sold_early"]) >= EXIT_SELLERS: out = f"{len(p['sold_early'])} of the 20 biggest holders sold half or more of their coins"
     elif p["bad_checks"] >= SELLERS_WIN_CHECKS: out = "more sellers than buyers 3 checks in a row (1 min) — the crowd turned"
     elif now() - p["opened"] > MAX_HOLD_H * 3600: out = "6-hour limit"
@@ -248,7 +264,7 @@ def buy_card(F, C, took, why_not):
           "- Trailing stop: 30% below the top until +100%, 25% until +300%, then 20%.",
           "- 3 early buyers sell → sell 25%. 7 early buyers sell → sell everything.",
           "- Creator sells, or sellers outnumber buyers 3 checks in a row → sell everything.",
-          "- Spike +50% in 2 min → sell 25%. No new high in 30 min → sell half. Hard stop −25%. Out within 6 hours.",
+          "- Spike +50% in 2 min → sell 25%. No new high in 30 min → sell half. Hard stop −25%. Pool money −20% → sell all. Out within 6 hours.",
           "", f"**Practice account:** {'BOUGHT' if took else 'not bought — ' + why_not} (also tracked in the shadow log).",
           "", "### How to spot this yourself",
           "> Minutes-old coin, a real crowd of different buyers (not a few bots), nobody holding too much, the creator not loaded up, "
@@ -261,8 +277,13 @@ def load():
     return {"started": now(), "cash": START_CASH, "open": [], "closed": [], "sh_open": [], "sh_closed": [], "seen": {},
             "traded_syms": {}, "rejects": {}, "scans": 0, "checked": 0, "gaps": []}
 
+def trades_today(st):
+    return sum(1 for p in st["open"] + st["closed"] if now() - p["opened"] < 86400)
+
 def scan(st):
     st["scans"] += 1
+    if trades_today(st) >= TRADES_PER_DAY and len(st["open"]) >= 0:
+        st["rejects"]["Daily trade limit reached (not scanning)"] = st["rejects"].get("Daily trade limit reached (not scanning)", 0) + 1; return
     pools, seen_now = [], set()
     for path, prm in (("/trending_pools", {"duration": "5m", "include": "base_token,dex"}), ("/new_pools", {"include": "base_token,dex"})):
         for p in (get(path, prm) or {}).get("data") or []:
@@ -285,6 +306,7 @@ def scan(st):
         st["seen"][pool] = now() + 86400; st["traded_syms"][F["sym"].lower()] = now()
         took, why = False, ""
         if len(st["open"]) >= MAX_OPEN: why = f"already {MAX_OPEN} open"
+        elif trades_today(st) >= TRADES_PER_DAY: why = f"daily limit ({TRADES_PER_DAY} trades in 24 h) — costs add up"
         else:
             if st["cash"] < TRADE_USD and not st.get("ran_out"):
                 st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"   # account would be out of money here
@@ -321,7 +343,7 @@ def report(st):
         w = [x for x in r if x > 0.01]
         return (f"{len(r)} trades · {len(w)} wins ({len(w) / len(r):.0%}) · average {sum(r) / len(r):+.0%} · best {max(r):+.0%} · worst {min(r):+.0%} · "
                 f"total {sum(p['realized'] - p['cost'] for p in cl):+.2f} on {money(TRADE_USD)} trades")
-    txt = "\n".join([f"# 🐣 Early Bird practice — day {(now() - st['started']) / 86400:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
+    txt = "\n".join([f"# 🐣 Early Bird practice (week 2 — fixed rules, see lessons.md) — day {(now() - st['started']) / 86400:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
         f"- **Practice account ($15 start):** {money(st['cash'])} cash + {len(st['open'])} open",
         f"- **Practice trades:** {stats(st['closed'])}",
         (f"- ⚠️ **The $15 account ran out of money at {st['ran_out']}.** Trading continues in TRACKING MODE (balance can go below $0) so we keep collecting data." if st.get("ran_out") else ""),

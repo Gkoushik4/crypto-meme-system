@@ -3,12 +3,15 @@
 - Entry A: Early Bird filters.  Entry B: 2+ trusted wallets with real money bet big on a new coin (plus safety checks).
 - Exits: 25% at +50%, 25% at +100%, floor stop +40%; stay while the pros stay, sell when 1-2 top wallets sell;
   scam alarms (staircase bot pattern, pool money dropping, creator selling); fake-price guard; 5-second price checks.
-Rules fixed 2026-10-20 before the v2 test.  Run: python v2.py run SECONDS"""
+Rules fixed 2026-10-20 before the v2 test.  Run: python v2.py run SECONDS
+WEEK 2 (2026-10-23): uses the fixed Early Bird entry checks + max 5 trades/day, holder sells only count after we bought,
+crashes teach the shared dumper list (lessons.py). The wallet scorebook carries over from week 1."""
 import sys, json, time, statistics
 from pathlib import Path
 from collections import deque, defaultdict
 import requests
 import earlybird as EB
+import lessons
 
 # ============================ RULES (frozen) ============================
 START_CASH, TRADE_USD, MAX_OPEN, TEST_DAYS = 30.0, 10.0, 2, 7
@@ -227,7 +230,9 @@ def manage(st, p, d):
     # 1) drained pool: coins can't be sold
     if liq < max(1000, DRAINED * p["liq_peak"]):
         p["log"].append(f"{ts()} pool drained ({money(liq)} left, was {money(p['liq_peak'])}) — rug: remaining coins worth $0")
-        card(f"### 🚨 v2 {p['sym']}: POOL DRAINED — remaining coins worth $0"); p["qty"] = 0; p["why"] = "pool drained (rug)"; return True
+        card(f"### 🚨 v2 {p['sym']}: POOL DRAINED — remaining coins worth $0"); p["qty"] = 0; p["why"] = "pool drained (rug)"
+        if not p.get("shadow"): lessons.learn("v2", p["sold_early"] + [p["dev"]], f"sold into the {p['sym']} crash (live, {ts()})")
+        return True
     # 2) fake-price guard
     if p["last_good"] and price > 2 * p["last_good"]:
         p["jump_n"] += 1
@@ -273,7 +278,7 @@ def holders_update(st, p):
     seen = set(p["seen_tx"]); new = [t for t in L if t["tx"] not in seen]
     p["seen_tx"] = (p["seen_tx"] + [t["tx"] for t in new])[-3000:]
     for t in new:
-        if t["buy"]: continue
+        if t["buy"] or t["t"] < p["opened"] - 5: continue          # week 2: sells from before we bought don't count
         if t["w"] == p["dev"]: p["dev_sold"] = True
         if t["w"] in p["early"]:
             p["early_sold_tok"][t["w"]] = p["early_sold_tok"].get(t["w"], 0) + t["tok"]
@@ -335,7 +340,7 @@ def safety_only(st, p):
     finally:
         for k, v in keep.items(): setattr(EB, k, v)
     if L is None: return None
-    C = [c for c in C if c[0] not in ("Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)", "Not too late", "Brand new")]
+    C = [c for c in C if c[0] not in ("Busy (video: min volume)", "A crowd is buying", "Size (video: min market cap)", "Not too late")]
     C.append(("Smart money is in", True, f"{len(tr)} trusted wallets bought in the last {B_WINDOW_MIN} min, {len(strong)} with real money / a big bet"))
     return C, F, L, tr
 
@@ -356,6 +361,8 @@ def scan(st):
         if (now() - EB.iso(a["pool_created_at"])) / 3600 > B_MAX_AGE_H: continue
         mint = p["relationships"]["base_token"]["data"]["id"].split("_", 1)[1]
         ingest(st, pool, mint, EB.ledger(pool, mint, big=True), f0(a.get("base_token_price_usd")), f0(a.get("reserve_in_usd")), sym=a["name"].split(" / ")[0]); fed += 1
+    if EB.trades_today(st) >= EB.TRADES_PER_DAY:      # week 2: daily limit — keep learning wallets, stop looking for buys
+        st["rejects"]["Daily trade limit reached (not buying)"] = st["rejects"].get("Daily trade limit reached (not buying)", 0) + 1; pools = []
     for p in pools:
         pool = p["attributes"]["address"]
         if now() < st["seen"].get(pool, 0) or any(x["pool"] == pool for x in st["open"]): continue
@@ -387,6 +394,7 @@ def scan(st):
         st["seen"][pool] = now() + 86400; st["traded_syms"][F["sym"].lower()] = now()
         took, why = False, ""
         if len(st["open"]) >= MAX_OPEN: why = f"already {MAX_OPEN} open"
+        elif EB.trades_today(st) >= EB.TRADES_PER_DAY: why = f"daily limit ({EB.TRADES_PER_DAY} trades in 24 h) — costs add up"
         else:
             if st["cash"] < TRADE_USD and not st["ran_out"]: st["ran_out"] = f"{ts()} UTC (day {(now() - st['started']) / 86400:.1f})"
             F["dev_hold"] = F.get("dev_hold")
@@ -431,7 +439,7 @@ def report(st):
         rr = [p["realized"] / p["cost"] - 1 for p in sub]
         if not rr: return "no closed trades yet"
         return f"{len(rr)} trades · {sum(x > 0.01 for x in rr)} wins · avg {sum(rr) / len(rr):+.0%} · best {max(rr):+.0%} · worst {min(rr):+.0%} · total {sum(p['realized'] - p['cost'] for p in sub):+.2f}"
-    txt = "\n".join([f"# 🦅 Meme v2 practice — day {days:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
+    txt = "\n".join([f"# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day {days:.1f} of {TEST_DAYS}", f"*Updated {ts()} UTC · pretend money*", "",
         f"- **Practice account ($30 start, $10 trades):** {money(st['cash'])} cash + {len(st['open'])} open",
         f"- **All trades:** {line(cl)}",
         f"- **Early Bird entries (A):** {line([p for p in cl if p['path'] == 'A'])}",
