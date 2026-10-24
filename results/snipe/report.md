@@ -1,14 +1,14 @@
 # 🎯 Launch-snipe practice (insider feature) — day 0.8 of 7
-*Updated 2026-10-23 23:30:41 UTC · pretend money*
+*Updated 2026-10-24 00:01:46 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈1.8 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 32800 · passed insider checks: 1662 (5%) · no trades after our signal: 63
+- **Live feed:** connected · delay ≈1.6 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 34378 · passed insider checks: 1717 (5%) · no trades after our signal: 63
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.15 cash + 0 open · 5 trades · 0 wins (0%) · avg -11% · best -8% · worst -17% · +100% trades 0 · total -2.85 on $5 trades
 - **SAMPLE (every coin that passed):** 60 trades · 13 wins (22%) · avg -5% · best +162% · worst -70% · +100% trades 2 · total -14.04 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 30 trades · 6 wins (20%) · avg -8% · best +135% · worst -58% · +100% trades 1 · total -12.70 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $16.50 cash + 0 open · 3 trades · 2 wins (67%) · avg +10% · best +28% · worst -23% · +100% trades 0 · total +1.50 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 3 trades · 2 wins (67%) · avg +10% · best +28% · worst -23% · +100% trades 0 · total +1.50 on $5 trades
-- Final Stretch: 10 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 187 graduations seen)
+- Final Stretch: 10 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
 - Known dumpers: 162 (grows with every dump we see)
 
@@ -23,10 +23,10 @@
 - INSIDER EXIT: creator sold: 9 trades, +15.19
 
 ## Why launches were skipped
-- Not a serial launcher: 28298
-- Not a copycat name: 27519
-- Creator bought ≤ 5%: 8887
-- Creator isn't a known dumper: 1965
+- Not a serial launcher: 29720
+- Not a copycat name: 28905
+- Creator bought ≤ 5%: 9389
+- Creator isn't a known dumper: 2000
 - FS: First buyers mostly holding: 1
 
 ## Gaps
