@@ -21,3 +21,4 @@
 - 2026-10-23 **Missed-profit tracker**: Early Bird and v2 now follow the coins they skipped because of the daily limit / full account (same rules, no money) → "MISSED" line in each report. Main already tracks every passing coin (shadow log). Early Bird keeps scanning after its daily limit so these coins are seen.
 - 2026-10-23 **Early Bird live insider exits**: same live feed as v2 — creator / biggest holders / known dumpers selling or pool money −20% → sell, filled ~1 s after the signal. Main stays on DexScreener data (its coins trade on many exchanges the live decoder doesn't read yet).
 - 2026-10-23 Restart safety: a check every 30 minutes restarts any stopped test (the cloud computer restarted 4 times in a day).
+- 2026-10-24 Fix: live feed gave up on coins that were moving fast at the moment we started watching (STARBUCKS rugged −100% that way). Live prices now use the real SOL price and only reject layouts 20x off.

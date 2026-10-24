@@ -1,5 +1,5 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 0.9 of 7
-*Updated 2026-10-24 01:03 UTC · pretend money*
+*Updated 2026-10-24 01:05 UTC · pretend money*
 
 - **Practice account ($15 start):** $6.94 cash + 1 open coin(s)
 - **Practice trades:** 1 trades · 0 wins (0%) · average -7.4% per trade · best -7% · worst -7% · total -0.56 on $7.50 trades

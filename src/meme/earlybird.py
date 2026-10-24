@@ -374,9 +374,9 @@ def live_process(st):
             if e["sig"] in sg: continue
             sg.add(e["sig"])
             if p.get("scale") is None:
-                sc = p.get("mkt0", p["entry"] / (1 + SLIP)) / e["px_sol"]
-                if not (0.5 * sol < sc < 2 * sol): p["live_bad"] = True; continue
-                p["scale"], p["pool_sol_peak"] = sc, e["pool_sol"]
+                ratio = e["px_sol"] * sol / p.get("mkt0", p["entry"] / (1 + SLIP))   # only reject truly broken layouts (20x off)
+                if not (1 / 20 < ratio < 20): p["live_bad"] = True; continue
+                p["scale"], p["pool_sol_peak"] = sol, e["pool_sol"]
             p["live"] = {"price": e["px_sol"] * p["scale"], "t": e["got"]}; p["pool_sol_peak"] = max(p["pool_sol_peak"], e["pool_sol"])
             if e["buy"] or e["got"] < p["opened"] or e["sig"] in p["seen_tx"] or p.get("pending_out"): continue
             p["seen_tx"].append(e["sig"])

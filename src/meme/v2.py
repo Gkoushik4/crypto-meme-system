@@ -506,9 +506,10 @@ def live_update(p, e, sol):
     if e["sig"] in sg: return
     sg.add(e["sig"])
     if p["scale"] is None:                                      # first live trade: tie the live price to the known dollar price
-        s = p["mkt0"] / e["px_sol"]
-        if not (0.5 * sol < s < 2 * sol): p["live_bad"] = True; p["log"].append(f"{ts()} live feed: unusual pool layout — using normal checks only"); return
-        p["scale"], p["pool_sol0"], p["liq_ref"] = s, e["pool_sol"], p["liq_peak"]
+        ratio = e["px_sol"] * sol / p["mkt0"]                     # fixed 2026-10-23: only reject truly broken layouts (20x off),
+        if not (1 / 20 < ratio < 20):                             # not coins that are moving fast (crashes are exactly when we need it)
+            p["live_bad"] = True; p["log"].append(f"{ts()} live feed: unusual pool layout — using normal checks only"); return
+        p["scale"], p["pool_sol0"], p["liq_ref"] = sol, e["pool_sol"], p["liq_peak"]
     p["live"] = {"price": e["px_sol"] * p["scale"], "t": e["got"], "pool_sol": e["pool_sol"]}; p["live_n"] += 1
     if e["got"] >= p["opened"] and e["sig"] not in p["seen_tx"]:
         p["seen_tx"].append(e["sig"])
