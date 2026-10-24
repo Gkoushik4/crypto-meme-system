@@ -22,3 +22,4 @@
 - 2026-10-23 **Early Bird live insider exits**: same live feed as v2 — creator / biggest holders / known dumpers selling or pool money −20% → sell, filled ~1 s after the signal. Main stays on DexScreener data (its coins trade on many exchanges the live decoder doesn't read yet).
 - 2026-10-23 Restart safety: a check every 30 minutes restarts any stopped test (the cloud computer restarted 4 times in a day).
 - 2026-10-24 Fix: live feed gave up on coins that were moving fast at the moment we started watching (STARBUCKS rugged −100% that way). Live prices now use the real SOL price and only reject layouts 20x off.
+- 2026-10-24 Meme tests PAUSED (usage limit). All state saved; they resume from where they stopped. Plan: move the meme tests to GitHub Actions so they run without Claude.
