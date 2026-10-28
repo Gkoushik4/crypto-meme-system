@@ -1,5 +1,5 @@
 # Crypto copy-trading — LIVE practice (pretend money)
-*Started 2026-10-21 04:27 UTC · updated 2026-10-28 21:15 UTC*
+*Started 2026-10-21 04:27 UTC · updated 2026-10-28 21:17 UTC*
 
 | version | account | closed trades | wins | losses | win % | avg win | avg loss | open now |
 |---|---|---|---|---|---|---|---|---|
