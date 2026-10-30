@@ -1,5 +1,5 @@
 # Crypto copy-trading — LIVE practice (pretend money)
-*Started 2026-10-21 04:27 UTC · updated 2026-10-30 20:13 UTC*
+*Started 2026-10-21 04:27 UTC · updated 2026-10-30 20:15 UTC*
 
 | version | account | closed trades | wins | losses | win % | avg win | avg loss | open now |
 |---|---|---|---|---|---|---|---|---|
@@ -12,3 +12,5 @@
 | 7 REGIME (adapts to the market) | 86.35 | 3 | 3 | 0 | 100% | +1.06R | - | 0 |
 
 ## Team changes
+- 2026-10-30 20:15 0x246f…574c (bench) is in a bad period (down -11% on copied trades) → watch-only
+- 2026-10-30 20:15 0x246f…574c (bench) recovered → back on the team
