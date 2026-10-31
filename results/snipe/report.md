@@ -1,14 +1,14 @@
-# 🎯 Launch-snipe practice (insider feature) — day 1.1 of 7
-*Updated 2026-10-31 21:58:09 UTC · pretend money*
+# 🎯 Launch-snipe practice (insider feature) — day 1.2 of 7
+*Updated 2026-10-31 22:18:12 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈1.3 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 56063 · passed insider checks: 2807 (5%) · no trades after our signal: 165
+- **Live feed:** connected · delay ≈7.2 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 56810 · passed insider checks: 2856 (5%) · no trades after our signal: 165
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.87 cash + 0 open · 10 trades · 1 wins (10%) · avg -4% · best +53% · worst -17% · +100% trades 0 · total -2.13 on $5 trades
 - **SAMPLE (every coin that passed):** 120 trades · 30 wins (25%) · avg -1% · best +310% · worst -74% · +100% trades 6 · total -8.36 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 60 trades · 11 wins (18%) · avg -1% · best +760% · worst -80% · +100% trades 2 · total -4.05 on $5 trades
-- 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $13.18 cash + 0 open · 6 trades · 4 wins (67%) · avg -6% · best +28% · worst -92% · +100% trades 0 · total -1.82 on $5 trades
+- 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $13.18 cash + 1 open · 6 trades · 4 wins (67%) · avg -6% · best +28% · worst -92% · +100% trades 0 · total -1.82 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 21 trades · 11 wins (52%) · avg -13% · best +28% · worst -92% · +100% trades 0 · total -13.25 on $5 trades
-- Final Stretch: 47 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- Final Stretch: 48 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
 - Known dumpers: 285 (grows with every dump we see)
 
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 24 trades, +52.14
 
 ## Why launches were skipped
-- Not a serial launcher: 48494
-- Not a copycat name: 47242
-- Creator bought ≤ 5%: 15731
-- Creator isn't a known dumper: 2806
+- Not a serial launcher: 49120
+- Not a copycat name: 47847
+- Creator bought ≤ 5%: 15931
+- Creator isn't a known dumper: 2876
 - FS: First buyers mostly holding: 1
 
 ## Gaps
