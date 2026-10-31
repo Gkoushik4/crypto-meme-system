@@ -1,21 +1,21 @@
 # 🎯 Launch-snipe practice (insider feature) — day 1.1 of 7
-*Updated 2026-10-31 20:58:01 UTC · pretend money*
+*Updated 2026-10-31 21:18:03 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈3.7 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 53901 · passed insider checks: 2652 (5%) · no trades after our signal: 165
+- **Live feed:** reconnecting · delay ≈6.4 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 54473 · passed insider checks: 2706 (5%) · no trades after our signal: 165
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.87 cash + 0 open · 10 trades · 1 wins (10%) · avg -4% · best +53% · worst -17% · +100% trades 0 · total -2.13 on $5 trades
 - **SAMPLE (every coin that passed):** 120 trades · 30 wins (25%) · avg -1% · best +310% · worst -74% · +100% trades 6 · total -8.36 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 60 trades · 11 wins (18%) · avg -1% · best +760% · worst -80% · +100% trades 2 · total -4.05 on $5 trades
-- 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $12.91 cash + 0 open · 5 trades · 3 wins (60%) · avg -8% · best +28% · worst -92% · +100% trades 0 · total -2.09 on $5 trades
-- 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 20 trades · 10 wins (50%) · avg -14% · best +28% · worst -92% · +100% trades 0 · total -13.52 on $5 trades
-- Final Stretch: 46 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $13.18 cash + 0 open · 6 trades · 4 wins (67%) · avg -6% · best +28% · worst -92% · +100% trades 0 · total -1.82 on $5 trades
+- 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 21 trades · 11 wins (52%) · avg -13% · best +28% · worst -92% · +100% trades 0 · total -13.25 on $5 trades
+- Final Stretch: 47 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
 - Known dumpers: 285 (grows with every dump we see)
 
 ## Why the sample trades ended (snipe + final stretch)
 - stop hit: 23 trades, -44.28
 - curve money down 50% from its peak: 30 trades, -34.21
-- no trades for 2 minutes — the crowd left: 31 trades, -7.42
+- no trades for 2 minutes — the crowd left: 32 trades, -7.15
 - INSIDER EXIT: 6 of the first 10 buyers sold: 2 trades, -5.79
 - INSIDER EXIT: known dumper sold: 8 trades, -4.75
 - INSIDER EXIT: 8 of the first 10 buyers sold: 2 trades, -0.92
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 24 trades, +52.14
 
 ## Why launches were skipped
-- Not a serial launcher: 46668
-- Not a copycat name: 45449
-- Creator bought ≤ 5%: 15149
-- Creator isn't a known dumper: 2640
+- Not a serial launcher: 47148
+- Not a copycat name: 45908
+- Creator bought ≤ 5%: 15275
+- Creator isn't a known dumper: 2683
 - FS: First buyers mostly holding: 1
 
 ## Gaps

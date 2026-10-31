@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 1.2 of 7
-*Updated 2026-10-31 20:58 UTC · pretend money*
+*Updated 2026-10-31 21:18 UTC · pretend money*
 
 - **Practice account ($15 start):** $18.95 cash + 0 open coin(s)
 - **Practice trades:** 2 trades · 1 wins (50%) · average +26.4% per trade · best +60% · worst -7% · total +3.95 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 12 trades · 4 wins (33%) · average -4.0% per trade · best +60% · worst -47% · total -3.64 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 246 · coins researched: 2342
+- Scans: 250 · coins researched: 2384
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 3 trades · 1 wins (33%) · average +12.7% per trade · best +60% · worst -14% · total +2.87 on $7.50 trades
@@ -14,18 +14,18 @@
 - **Holders7:** 3 trades · 1 wins (33%) · average -13.2% per trade · best +19% · worst -34% · total -2.97 on $7.50 trades
 
 ## Near-misses (safe, failed only one timing rule)
-- **failed 'Attention growing':** 8 trades · 2 wins (25%) · average -12.4% per trade · best +7% · worst -27% · total -7.45 on $7.50 trades
+- **failed 'Attention growing':** 9 trades · 2 wins (22%) · average -11.2% per trade · best +7% · worst -27% · total -7.56 on $7.50 trades
 - **failed 'Busy':** 1 trades · 0 wins (0%) · average -7.3% per trade · best -7% · worst -7% · total -0.55 on $7.50 trades
 - **failed 'Not late':** 7 trades · 1 wins (14%) · average -31.0% per trade · best +8% · worst -68% · total -16.29 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 2020
-- Busy: 1885
-- Attention growing: 1780
-- Right size: 1775
-- More buyers than sellers: 1485
-- Graduated: 890
-- Not late: 396
-- New (present-day): 383
+- Enough money in the pool: 2054
+- Busy: 1918
+- Attention growing: 1814
+- Right size: 1804
+- More buyers than sellers: 1512
+- Graduated: 904
+- Not late: 403
+- New (present-day): 393
 
 ## Gaps (simulator was not running)
 - 2026-10-23 07:03 → 2026-10-23 07:35 UTC (32 min)
