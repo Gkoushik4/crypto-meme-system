@@ -1,0 +1,108 @@
+# MEME PRACTICE TESTS — pretend money, public data only, no keys. Runs all 4 meme tests together on GitHub's computers:
+#   Main (meme_live.py) · Early Bird (earlybird.py) · v2 + live insider feed (v2.py) · Launch snipe + Final Stretch (snipe.py)
+# Each run works ~5h30m (GitHub's limit is 6 h), saves the tests' memory to GitHub's cache, commits the reports and trade cards
+# to results/, then starts the next run itself. Stops by itself when every test says WEEK DONE.
+# Turn it off any time: Actions → meme-tests → ⋯ → Disable workflow.
+name: meme-tests
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"          # safety net: restarts the chain if it ever breaks (skips itself if a run is already going)
+concurrency:
+  group: meme-tests
+  cancel-in-progress: false
+permissions:
+  contents: write
+  actions: write                    # lets each run start the next one
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      RUN_SECONDS: "19800"          # 5 h 30 min of testing per run (+ up to 10 min to wrap up)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip if another run is already going (safety-net runs only)
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh run list --workflow meme-tests.yml --status in_progress --json databaseId --jq "[.[] | select(.databaseId != ${{ github.run_id }})] | length")
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$n" -gt 0 ]; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "chain alive — skipping"; fi
+
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.skip != '1'
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        if: steps.guard.outputs.skip != '1'
+        run: pip install requests "websockets>=15" base58
+
+      - name: Restore the tests' memory (states, trade cards, learned dumper wallets)
+        if: steps.guard.outputs.skip != '1'
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            src/meme/data
+            src/meme/data_earlybird
+            src/meme/data_v2
+            src/meme/data_snipe
+            src/meme/lessons_live_*.json
+          key: meme-state-${{ github.run_id }}
+          restore-keys: meme-state-
+
+      - name: First run only — start from the saved seed
+        if: steps.guard.outputs.skip != '1' && steps.cache.outputs.cache-matched-key == ''
+        run: tar xzf results/backup/meme_seed.tgz -C src/meme && ls src/meme/data*/
+
+      - name: Run the 4 tests (~5h30m)
+        if: steps.guard.outputs.skip != '1'
+        working-directory: src/meme
+        run: |
+          for t in meme_live earlybird v2 snipe; do
+            timeout $((RUN_SECONDS + 600)) python -u $t.py run $RUN_SECONDS > $t.log 2>&1 &
+          done
+          wait || true
+          for t in meme_live earlybird v2 snipe; do echo "== $t"; grep -ci "error" $t.log || true; tail -n 3 $t.log; done
+
+      - name: Save the tests' memory for the next run
+        if: always() && steps.guard.outputs.skip != '1'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            src/meme/data
+            src/meme/data_earlybird
+            src/meme/data_v2
+            src/meme/data_snipe
+            src/meme/lessons_live_*.json
+          key: meme-state-${{ github.run_id }}
+
+      - name: Commit reports + trade cards
+        if: always() && steps.guard.outputs.skip != '1'
+        run: |
+          for m in meme_main:data earlybird:data_earlybird v2:data_v2 snipe:data_snipe; do
+            dst=results/${m%%:*}; src=src/meme/${m##*:}
+            mkdir -p $dst; cp $src/report.md $dst/ 2>/dev/null || true
+            rm -rf $dst/cards; cp -r $src/cards $dst/ 2>/dev/null || true
+          done
+          mkdir -p results/lessons; cp src/meme/lessons_live_*.json results/lessons/ 2>/dev/null || true
+          mkdir -p results/meme_logs; for t in meme_live earlybird v2 snipe; do tail -n 200 src/meme/$t.log > results/meme_logs/$t.log 2>/dev/null || true; done
+          git config user.name "crypto-meme-system-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/meme_main results/earlybird results/v2 results/snipe results/lessons results/meme_logs
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Meme tests update $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q origin main && break; sleep 9; done
+
+      - name: Start the next run (unless every test finished its week)
+        if: always() && steps.guard.outputs.skip != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          done=0
+          for t in meme_live earlybird v2 snipe; do grep -q "WEEK DONE" src/meme/$t.log 2>/dev/null && done=$((done+1)); done
+          if [ "$done" -eq 4 ]; then echo "All 4 tests finished their week — chain stops."; exit 0; fi
+          gh workflow run meme-tests.yml --ref main
