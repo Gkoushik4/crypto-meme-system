@@ -1,20 +1,20 @@
 # 🐣 Early Bird practice (week 2 — fixed rules, see lessons.md) — day 1.1 of 7
-*Updated 2026-10-31 18:58 UTC · pretend money*
+*Updated 2026-10-31 19:18 UTC · pretend money*
 
 - **Practice account ($15 start):** $14.10 cash + 0 open
 - **Practice trades:** 1 trades · 0 wins (0%) · average -18% · best -18% · worst -18% · total -0.90 on $5.00 trades
 
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
 - ⚡ **Live insider exits:** feed connected · delay ≈0.0 s · live exits 0 (creator/holders/dumper: 0)
-- Scans 1056 · coins checked 18759
+- Scans 1072 · coins checked 19014
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 18652
-- Busy (video: min volume): 17972
-- A crowd is buying: 17297
-- Size (video: min market cap): 16484
-- Money in the pool: 16290
-- Not too late: 3634
+- Survived launch (45 min – 4 h old): 18906
+- Busy (video: min volume): 18210
+- A crowd is buying: 17517
+- Size (video: min market cap): 16692
+- Money in the pool: 16509
+- Not too late: 3689
 - Not buying the top: 9
 - Not a copycat we already traded: 2
 - Live price data: 1
