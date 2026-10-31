@@ -62,10 +62,25 @@ jobs:
         if: steps.guard.outputs.skip != '1'
         working-directory: src/meme
         run: |
+          pids=""
           for t in meme_live earlybird v2 snipe; do
             timeout $((RUN_SECONDS + 600)) python -u $t.py run $RUN_SECONDS > $t.log 2>&1 &
+            pids="$pids $!"
           done
-          wait || true
+          # progress: every 20 min, publish the 4 reports so results can be read during the run
+          git config user.name "crypto-meme-system-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ( while sleep 1200; do
+              cd "$GITHUB_WORKSPACE"
+              for m in meme_main:data earlybird:data_earlybird v2:data_v2 snipe:data_snipe; do
+                mkdir -p results/${m%%:*}; cp src/meme/${m##*:}/report.md results/${m%%:*}/ 2>/dev/null || true; done
+              mkdir -p results/meme_logs; for t in meme_live earlybird v2 snipe; do tail -n 60 src/meme/$t.log > results/meme_logs/$t.log 2>/dev/null || true; done
+              git add results/meme_main/report.md results/earlybird/report.md results/v2/report.md results/snipe/report.md results/meme_logs
+              git diff --cached --quiet || { git commit -q -m "Meme tests progress $(date -u +'%H:%M') UTC"; for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin main && break; sleep 7; done; }
+            done ) &
+          prog=$!
+          wait $pids || true
+          kill $prog 2>/dev/null || true
           for t in meme_live earlybird v2 snipe; do echo "== $t"; grep -ci "error" $t.log || true; tail -n 3 $t.log; done
 
       - name: Save the tests' memory for the next run
