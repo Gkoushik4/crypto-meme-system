@@ -1,14 +1,14 @@
 # 🎯 Launch-snipe practice (insider feature) — day 1.4 of 7
-*Updated 2026-11-01 03:51:27 UTC · pretend money*
+*Updated 2026-11-01 04:11:29 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈2.0 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 68776 · passed insider checks: 3493 (5%) · no trades after our signal: 175
+- **Live feed:** connected · delay ≈1.5 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 69413 · passed insider checks: 3526 (5%) · no trades after our signal: 175
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.87 cash + 0 open · 10 trades · 1 wins (10%) · avg -4% · best +53% · worst -17% · +100% trades 0 · total -2.13 on $5 trades
 - **SAMPLE (every coin that passed):** 120 trades · 30 wins (25%) · avg -1% · best +310% · worst -74% · +100% trades 6 · total -8.36 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 60 trades · 11 wins (18%) · avg -1% · best +760% · worst -80% · +100% trades 2 · total -4.05 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $14.37 cash + 0 open · 10 trades · 6 wins (60%) · avg -1% · best +33% · worst -92% · +100% trades 0 · total -0.63 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 26 trades · 14 wins (54%) · avg -9% · best +33% · worst -92% · +100% trades 0 · total -11.72 on $5 trades
-- Final Stretch: 57 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- Final Stretch: 58 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
 - Known dumpers: 288 (grows with every dump we see)
 
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 24 trades, +52.14
 
 ## Why launches were skipped
-- Not a serial launcher: 59544
-- Not a copycat name: 57852
-- Creator bought ≤ 5%: 18945
-- Creator isn't a known dumper: 3697
+- Not a serial launcher: 60107
+- Not a copycat name: 58394
+- Creator bought ≤ 5%: 19078
+- Creator isn't a known dumper: 3743
 - FS: First buyers mostly holding: 1
 
 ## Gaps
