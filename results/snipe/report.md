@@ -1,34 +1,34 @@
 # 🎯 Launch-snipe practice (insider feature) — day 1.4 of 7
-*Updated 2026-11-01 04:11:29 UTC · pretend money*
+*Updated 2026-11-01 04:31:32 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈1.5 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 69413 · passed insider checks: 3526 (5%) · no trades after our signal: 175
+- **Live feed:** connected · delay ≈2.9 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 70053 · passed insider checks: 3553 (5%) · no trades after our signal: 175
 - **PRACTICE ($15, $5 trades, max 5/day):** $12.87 cash + 0 open · 10 trades · 1 wins (10%) · avg -4% · best +53% · worst -17% · +100% trades 0 · total -2.13 on $5 trades
 - **SAMPLE (every coin that passed):** 120 trades · 30 wins (25%) · avg -1% · best +310% · worst -74% · +100% trades 6 · total -8.36 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 60 trades · 11 wins (18%) · avg -1% · best +760% · worst -80% · +100% trades 2 · total -4.05 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $14.37 cash + 0 open · 10 trades · 6 wins (60%) · avg -1% · best +33% · worst -92% · +100% trades 0 · total -0.63 on $5 trades
-- 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 26 trades · 14 wins (54%) · avg -9% · best +33% · worst -92% · +100% trades 0 · total -11.72 on $5 trades
-- Final Stretch: 58 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 29 trades · 16 wins (55%) · avg -11% · best +33% · worst -92% · +100% trades 0 · total -15.46 on $5 trades
+- Final Stretch: 60 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
-- Known dumpers: 288 (grows with every dump we see)
+- Known dumpers: 300 (grows with every dump we see)
 
 ## Why the sample trades ended (snipe + final stretch)
 - stop hit: 23 trades, -44.28
 - curve money down 50% from its peak: 30 trades, -34.21
 - INSIDER EXIT: 6 of the first 10 buyers sold: 3 trades, -6.92
 - no trades for 2 minutes — the crowd left: 33 trades, -5.50
-- INSIDER EXIT: known dumper sold: 9 trades, -4.77
-- INSIDER EXIT: 8 of the first 10 buyers sold: 2 trades, -0.92
+- INSIDER EXIT: 8 of the first 10 buyers sold: 3 trades, -5.36
+- INSIDER EXIT: known dumper sold: 11 trades, -4.07
 - INSIDER EXIT: 5 of the first 10 buyers sold: 8 trades, +4.15
 - graduated: 7 trades, +8.24
 - trailing / break-even stop: 7 trades, +12.00
 - INSIDER EXIT: creator sold: 24 trades, +52.14
 
 ## Why launches were skipped
-- Not a serial launcher: 60107
-- Not a copycat name: 58394
-- Creator bought ≤ 5%: 19078
-- Creator isn't a known dumper: 3743
+- Not a serial launcher: 60681
+- Not a copycat name: 58955
+- Creator bought ≤ 5%: 19246
+- Creator isn't a known dumper: 3806
 - FS: First buyers mostly holding: 1
 
 ## Gaps
