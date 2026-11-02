@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 3.3 of 7
-*Updated 2026-11-02 23:08 UTC · pretend money*
+*Updated 2026-11-02 23:28 UTC · pretend money*
 
 - **Practice account ($15 start):** $8.00 cash + 1 open coin(s)
 - **Practice trades:** 6 trades · 1 wins (17%) · average +1.1% per trade · best +60% · worst -30% · total +0.50 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 28 trades · 7 wins (25%) · average -5.7% per trade · best +153% · worst -47% · total -11.98 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 841 · coins researched: 7292
+- Scans: 845 · coins researched: 7319
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 7 trades · 1 wins (14%) · average -1.1% per trade · best +60% · worst -30% · total -0.59 on $7.50 trades
@@ -18,14 +18,14 @@
 - **failed 'Busy':** 4 trades · 1 wins (25%) · average -4.4% per trade · best +6% · worst -12% · total -1.33 on $7.50 trades
 - **failed 'Not late':** 18 trades · 4 wins (22%) · average -14.2% per trade · best +76% · worst -68% · total -19.12 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 6263
-- Busy: 5871
-- Right size: 5618
-- Attention growing: 5547
-- More buyers than sellers: 4715
-- Graduated: 3028
-- New (present-day): 1331
-- Not late: 1232
+- Enough money in the pool: 6283
+- Busy: 5891
+- Right size: 5637
+- Attention growing: 5566
+- More buyers than sellers: 4733
+- Graduated: 3038
+- New (present-day): 1337
+- Not late: 1238
 - Can't freeze wallets: 1
 - Biggest wallet ≤ 10%: 1
 - Top 10 wallets ≤ 30%: 1
