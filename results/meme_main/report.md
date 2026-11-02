@@ -1,16 +1,16 @@
-# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 3.1 of 7
-*Updated 2026-11-02 20:24 UTC · pretend money*
+# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 3.2 of 7
+*Updated 2026-11-02 20:47 UTC · pretend money*
 
 - **Practice account ($15 start):** $15.50 cash + 0 open coin(s)
 - **Practice trades:** 6 trades · 1 wins (17%) · average +1.1% per trade · best +60% · worst -30% · total +0.50 on $7.50 trades
-- **Shadow log (every coin that passed, no limits):** 27 trades · 6 wins (22%) · average -11.6% per trade · best +60% · worst -47% · total -23.48 on $7.50 trades
+- **Shadow log (every coin that passed, no limits):** 28 trades · 7 wins (25%) · average -5.7% per trade · best +153% · worst -47% · total -11.98 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 809 · coins researched: 6994
+- Scans: 813 · coins researched: 7031
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 7 trades · 1 wins (14%) · average -1.1% per trade · best +60% · worst -30% · total -0.59 on $7.50 trades
 - **EarlyBird:** 7 trades · 3 wins (43%) · average -7.4% per trade · best +27% · worst -30% · total -3.88 on $7.50 trades
-- **Promising:** 6 trades · 1 wins (17%) · average -22.9% per trade · best +53% · worst -47% · total -10.32 on $7.50 trades
+- **Promising:** 7 trades · 2 wins (29%) · average +2.3% per trade · best +153% · worst -47% · total +1.18 on $7.50 trades
 - **Holders7:** 7 trades · 1 wins (14%) · average -16.6% per trade · best +19% · worst -34% · total -8.69 on $7.50 trades
 
 ## Near-misses (safe, failed only one timing rule)
@@ -18,14 +18,14 @@
 - **failed 'Busy':** 4 trades · 1 wins (25%) · average -4.4% per trade · best +6% · worst -12% · total -1.33 on $7.50 trades
 - **failed 'Not late':** 15 trades · 4 wins (27%) · average -10.4% per trade · best +76% · worst -68% · total -11.74 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 6012
-- Busy: 5637
-- Right size: 5388
-- Attention growing: 5348
-- More buyers than sellers: 4520
-- Graduated: 2889
-- New (present-day): 1261
-- Not late: 1169
+- Enough money in the pool: 6045
+- Busy: 5664
+- Right size: 5415
+- Attention growing: 5370
+- More buyers than sellers: 4542
+- Graduated: 2907
+- New (present-day): 1267
+- Not late: 1177
 
 ## Gaps (simulator was not running)
 - 2026-10-23 07:03 → 2026-10-23 07:35 UTC (32 min)
