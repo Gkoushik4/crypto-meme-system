@@ -1,14 +1,14 @@
 # 🎯 Launch-snipe practice (insider feature) — day 2.8 of 7
-*Updated 2026-11-02 14:42:54 UTC · pretend money*
+*Updated 2026-11-02 14:53:06 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈6.6 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 146179 · passed insider checks: 6442 (4%) · no trades after our signal: 282
+- **Live feed:** connected · delay ≈5.4 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 146577 · passed insider checks: 6458 (4%) · no trades after our signal: 282
 - **PRACTICE ($15, $5 trades, max 5/day):** $9.71 cash + 0 open · 15 trades · 1 wins (7%) · avg -7% · best +53% · worst -26% · +100% trades 0 · total -5.29 on $5 trades
 - **SAMPLE (every coin that passed):** 180 trades · 36 wins (20%) · avg -5% · best +310% · worst -86% · +100% trades 6 · total -45.74 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 90 trades · 19 wins (21%) · avg -3% · best +760% · worst -80% · +100% trades 3 · total -15.72 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $10.30 cash + 0 open · 15 trades · 8 wins (53%) · avg -6% · best +33% · worst -92% · +100% trades 0 · total -4.70 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 46 trades · 24 wins (52%) · avg -13% · best +46% · worst -92% · +100% trades 0 · total -30.63 on $5 trades
-- Final Stretch: 105 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- Final Stretch: 106 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 
 - Known dumpers: 383 (grows with every dump we see)
 
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 43 trades, +44.78
 
 ## Why launches were skipped
-- Not a serial launcher: 128281
-- Not a copycat name: 125405
-- Creator bought ≤ 5%: 41719
-- Creator isn't a known dumper: 7601
+- Not a serial launcher: 128608
+- Not a copycat name: 125768
+- Creator bought ≤ 5%: 41835
+- Creator isn't a known dumper: 7603
 - FS: First buyers mostly holding: 4
 - FS: Creator hasn't sold: 2
 
