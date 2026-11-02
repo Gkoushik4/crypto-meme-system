@@ -1,11 +1,11 @@
-# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 2.4 of 7
-*Updated 2026-11-02 03:38 UTC · pretend money*
+# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 2.5 of 7
+*Updated 2026-11-02 03:49 UTC · pretend money*
 
 - **Practice account ($15 start):** $17.73 cash + 0 open coin(s)
 - **Practice trades:** 4 trades · 1 wins (25%) · average +9.1% per trade · best +60% · worst -12% · total +2.73 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 20 trades · 5 wins (25%) · average -8.8% per trade · best +60% · worst -47% · total -13.18 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 610 · coins researched: 5429
+- Scans: 612 · coins researched: 5447
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 5 trades · 1 wins (20%) · average +4.4% per trade · best +60% · worst -14% · total +1.64 on $7.50 trades
@@ -18,14 +18,14 @@
 - **failed 'Busy':** 2 trades · 1 wins (50%) · average -0.6% per trade · best +6% · worst -7% · total -0.09 on $7.50 trades
 - **failed 'Not late':** 13 trades · 3 wins (23%) · average -14.8% per trade · best +76% · worst -68% · total -14.45 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 4655
-- Busy: 4412
-- Attention growing: 4170
-- Right size: 4153
-- More buyers than sellers: 3526
-- Graduated: 2193
-- New (present-day): 1020
-- Not late: 864
+- Enough money in the pool: 4670
+- Busy: 4425
+- Attention growing: 4179
+- Right size: 4167
+- More buyers than sellers: 3537
+- Graduated: 2196
+- New (present-day): 1024
+- Not late: 865
 
 ## Gaps (simulator was not running)
 - 2026-10-23 07:03 → 2026-10-23 07:35 UTC (32 min)
