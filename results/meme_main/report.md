@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 2.4 of 7
-*Updated 2026-11-02 02:18 UTC · pretend money*
+*Updated 2026-11-02 02:38 UTC · pretend money*
 
 - **Practice account ($15 start):** $17.73 cash + 0 open coin(s)
 - **Practice trades:** 4 trades · 1 wins (25%) · average +9.1% per trade · best +60% · worst -12% · total +2.73 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 20 trades · 5 wins (25%) · average -8.8% per trade · best +60% · worst -47% · total -13.18 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 594 · coins researched: 5274
+- Scans: 598 · coins researched: 5314
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 5 trades · 1 wins (20%) · average +4.4% per trade · best +60% · worst -14% · total +1.64 on $7.50 trades
@@ -16,16 +16,16 @@
 ## Near-misses (safe, failed only one timing rule)
 - **failed 'Attention growing':** 26 trades · 8 wins (31%) · average -10.7% per trade · best +57% · worst -83% · total -20.77 on $7.50 trades
 - **failed 'Busy':** 2 trades · 1 wins (50%) · average -0.6% per trade · best +6% · worst -7% · total -0.09 on $7.50 trades
-- **failed 'Not late':** 12 trades · 3 wins (25%) · average -13.3% per trade · best +76% · worst -68% · total -11.93 on $7.50 trades
+- **failed 'Not late':** 13 trades · 3 wins (23%) · average -14.8% per trade · best +76% · worst -68% · total -14.45 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 4525
-- Busy: 4290
-- Attention growing: 4057
-- Right size: 4034
-- More buyers than sellers: 3425
-- Graduated: 2121
-- New (present-day): 991
-- Not late: 835
+- Enough money in the pool: 4558
+- Busy: 4322
+- Attention growing: 4090
+- Right size: 4064
+- More buyers than sellers: 3454
+- Graduated: 2142
+- New (present-day): 998
+- Not late: 842
 
 ## Gaps (simulator was not running)
 - 2026-10-23 07:03 → 2026-10-23 07:35 UTC (32 min)
