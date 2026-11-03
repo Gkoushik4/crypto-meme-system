@@ -1,11 +1,11 @@
-# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 4.2 of 7
-*Updated 2026-11-03 22:36 UTC · pretend money*
+# 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 4.3 of 7
+*Updated 2026-11-03 22:56 UTC · pretend money*
 
 - **Practice account ($15 start):** $23.45 cash + 0 open coin(s)
 - **Practice trades:** 10 trades · 3 wins (30%) · average +11.3% per trade · best +133% · worst -30% · total +8.45 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 42 trades · 11 wins (26%) · average +3.8% per trade · best +236% · worst -47% · total +12.07 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 1119 · coins researched: 9700
+- Scans: 1123 · coins researched: 9730
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 11 trades · 3 wins (27%) · average +8.9% per trade · best +133% · worst -30% · total +7.36 on $7.50 trades
@@ -15,17 +15,17 @@
 
 ## Near-misses (safe, failed only one timing rule)
 - **failed 'Attention growing':** 36 trades · 10 wins (28%) · average -9.7% per trade · best +57% · worst -83% · total -26.15 on $7.50 trades
-- **failed 'Busy':** 9 trades · 2 wins (22%) · average -0.2% per trade · best +61% · worst -28% · total -0.11 on $7.50 trades
+- **failed 'Busy':** 10 trades · 2 wins (20%) · average -2.7% per trade · best +61% · worst -28% · total -2.02 on $7.50 trades
 - **failed 'Not late':** 24 trades · 5 wins (21%) · average -14.7% per trade · best +84% · worst -96% · total -26.52 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 8336
-- Busy: 7731
-- Right size: 7431
-- Attention growing: 7340
-- More buyers than sellers: 6292
-- Graduated: 3917
-- New (present-day): 1838
-- Not late: 1655
+- Enough money in the pool: 8362
+- Busy: 7749
+- Right size: 7452
+- Attention growing: 7359
+- More buyers than sellers: 6308
+- Graduated: 3926
+- New (present-day): 1844
+- Not late: 1661
 - Can't freeze wallets: 2
 - Biggest wallet ≤ 10%: 2
 - Top 10 wallets ≤ 30%: 2
