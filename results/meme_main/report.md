@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 3.4 of 7
-*Updated 2026-11-03 02:19 UTC · pretend money*
+*Updated 2026-11-03 02:39 UTC · pretend money*
 
 - **Practice account ($15 start):** $14.40 cash + 0 open coin(s)
 - **Practice trades:** 7 trades · 1 wins (14%) · average -1.1% per trade · best +60% · worst -30% · total -0.60 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 32 trades · 7 wins (22%) · average -7.6% per trade · best +153% · worst -47% · total -18.32 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 878 · coins researched: 7596
+- Scans: 882 · coins researched: 7622
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 8 trades · 1 wins (12%) · average -2.8% per trade · best +60% · worst -30% · total -1.68 on $7.50 trades
@@ -16,16 +16,16 @@
 ## Near-misses (safe, failed only one timing rule)
 - **failed 'Attention growing':** 30 trades · 9 wins (30%) · average -8.9% per trade · best +57% · worst -83% · total -20.14 on $7.50 trades
 - **failed 'Busy':** 4 trades · 1 wins (25%) · average -4.4% per trade · best +6% · worst -12% · total -1.33 on $7.50 trades
-- **failed 'Not late':** 18 trades · 4 wins (22%) · average -14.2% per trade · best +76% · worst -68% · total -19.12 on $7.50 trades
+- **failed 'Not late':** 19 trades · 4 wins (21%) · average -14.7% per trade · best +76% · worst -68% · total -20.96 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 6524
-- Busy: 6117
-- Right size: 5846
-- Attention growing: 5783
-- More buyers than sellers: 4910
-- Graduated: 3161
-- New (present-day): 1396
-- Not late: 1285
+- Enough money in the pool: 6544
+- Busy: 6131
+- Right size: 5863
+- Attention growing: 5801
+- More buyers than sellers: 4927
+- Graduated: 3170
+- New (present-day): 1401
+- Not late: 1290
 - Can't freeze wallets: 1
 - Biggest wallet ≤ 10%: 1
 - Top 10 wallets ≤ 30%: 1
