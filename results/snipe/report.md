@@ -1,8 +1,8 @@
 # 🎯 Launch-snipe practice (insider feature) — day 4.6 of 7
-*Updated 2026-11-04 08:42:31 UTC · pretend money*
+*Updated 2026-11-04 09:02:35 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈1.4 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 244867 · passed insider checks: 10152 (4%) · no trades after our signal: 546
+- **Live feed:** connected · delay ≈1.0 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 245677 · passed insider checks: 10184 (4%) · no trades after our signal: 546
 - **PRACTICE ($15, $5 trades, max 5/day):** $6.31 cash + 0 open · 25 trades · 2 wins (8%) · avg -7% · best +76% · worst -37% · +100% trades 0 · total -8.69 on $5 trades
 - **SAMPLE (every coin that passed):** 300 trades · 51 wins (17%) · avg -6% · best +310% · worst -86% · +100% trades 8 · total -96.78 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 150 trades · 34 wins (23%) · avg -4% · best +760% · worst -84% · +100% trades 6 · total -29.71 on $5 trades
@@ -10,7 +10,7 @@
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 56 trades · 29 wins (52%) · avg -9% · best +69% · worst -92% · +100% trades 0 · total -25.46 on $5 trades
 - Final Stretch: 156 clean coins reached 70% of the curve · graduation point ≈1 SOL (from 200 graduations seen)
 - ⚠️ Practice account ran out at 2026-11-02 18:48:28 UTC (day 3.0) — continuing in tracking mode.
-- Known dumpers: 543 (grows with every dump we see)
+- Known dumpers: 544 (grows with every dump we see)
 
 ## Why the sample trades ended (snipe + final stretch)
 - stop hit: 41 trades, -84.80
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 60 trades, +45.72
 
 ## Why launches were skipped
-- Not a serial launcher: 215924
-- Not a copycat name: 211894
-- Creator bought ≤ 5%: 71676
-- Creator isn't a known dumper: 12649
+- Not a serial launcher: 216646
+- Not a copycat name: 212606
+- Creator bought ≤ 5%: 71871
+- Creator isn't a known dumper: 12661
 - FS: First buyers mostly holding: 8
 - FS: Creator hasn't sold: 3
 - FS: Money still coming in: 1
