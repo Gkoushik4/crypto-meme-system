@@ -1,14 +1,14 @@
-# 🎯 Launch-snipe practice (insider feature) — day 4.6 of 7
-*Updated 2026-11-04 10:03:44 UTC · pretend money*
+# 🎯 Launch-snipe practice (insider feature) — day 4.7 of 7
+*Updated 2026-11-04 10:23:47 UTC · pretend money*
 
 - **Live feed:** connected · delay ≈1.0 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 247832 · passed insider checks: 10277 (4%) · no trades after our signal: 547
+- **Launches seen:** 248724 · passed insider checks: 10309 (4%) · no trades after our signal: 548
 - **PRACTICE ($15, $5 trades, max 5/day):** $6.31 cash + 0 open · 25 trades · 2 wins (8%) · avg -7% · best +76% · worst -37% · +100% trades 0 · total -8.69 on $5 trades
 - **SAMPLE (every coin that passed):** 300 trades · 51 wins (17%) · avg -6% · best +310% · worst -86% · +100% trades 8 · total -96.78 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 150 trades · 34 wins (23%) · avg -4% · best +760% · worst -84% · +100% trades 6 · total -29.71 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $11.03 cash + 0 open · 22 trades · 11 wins (50%) · avg -4% · best +33% · worst -92% · +100% trades 0 · total -3.97 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 56 trades · 29 wins (52%) · avg -9% · best +69% · worst -92% · +100% trades 0 · total -25.46 on $5 trades
-- Final Stretch: 157 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- Final Stretch: 158 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 - ⚠️ Practice account ran out at 2026-11-02 18:48:28 UTC (day 3.0) — continuing in tracking mode.
 - Known dumpers: 544 (grows with every dump we see)
 
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 60 trades, +45.72
 
 ## Why launches were skipped
-- Not a serial launcher: 218542
-- Not a copycat name: 214489
-- Creator bought ≤ 5%: 72461
-- Creator isn't a known dumper: 12712
+- Not a serial launcher: 219338
+- Not a copycat name: 215267
+- Creator bought ≤ 5%: 72680
+- Creator isn't a known dumper: 12762
 - FS: First buyers mostly holding: 8
 - FS: Creator hasn't sold: 3
 - FS: Money still coming in: 1
