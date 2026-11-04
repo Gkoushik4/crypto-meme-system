@@ -1,32 +1,32 @@
 # 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 4.6 of 7
-*Updated 2026-11-04 07:54 UTC · pretend money*
+*Updated 2026-11-04 08:22 UTC · pretend money*
 
-- **Practice account ($30 start, $10 trades):** $-3.78 cash + 0 open
-- **All trades:** 9 trades · 1 wins · avg -38% · best +4% · worst -100% · total -33.78
+- **Practice account ($30 start, $10 trades):** $-2.12 cash + 0 open
+- **All trades:** 10 trades · 2 wins · avg -32% · best +17% · worst -100% · total -32.12
 - **Early Bird entries (A):** 4 trades · 0 wins · avg -39% · best -21% · worst -47% · total -15.58
-- **Early Pro entries (B: 2+ trusted wallets bought in the last 10 min, may be < 45 min old):** 5 trades · 1 wins · avg -36% · best +4% · worst -100% · total -18.20
-- **Trades with pros in the coin:** 5 trades · 1 wins · avg -36% · best +4% · worst -100% · total -18.20
-- **Normal-risk coins (standard profit lock):** 7 trades · 0 wins · avg -46% · best -4% · worst -100% · total -32.42
+- **Early Pro entries (B: 2+ trusted wallets bought in the last 10 min, may be < 45 min old):** 6 trades · 2 wins · avg -28% · best +17% · worst -100% · total -16.53
+- **Trades with pros in the coin:** 6 trades · 2 wins · avg -28% · best +17% · worst -100% · total -16.53
+- **Normal-risk coins (standard profit lock):** 8 trades · 1 wins · avg -38% · best +17% · worst -100% · total -30.76
 - **Rug-risk coins — your version (75% at +150%, rest at +200%):** 2 trades · 1 wins · avg -7% · best +4% · worst -18% · total -1.35
 - **Rug-risk coins — safer blend (same coins, tracked side by side):** 2 trades · 0 wins · avg -37% · best -31% · worst -43% · total -7.33
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
 - **🚀 +100% trades:** 0 so far (≈0 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.2 s · watching 16 wallets/coins · pro buys seen 12545 · pro alarms 141 · live Early Pro buys 5 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 543
-- Scorebook: 59876 wallets seen across 3628 coins · trusted pro/early wallets: 16
-- Scans 1181 · coins checked 31595
+- ⚡ **Live feed (insider feature):** connected · delay ≈5.7 s · watching 16 wallets/coins · pro buys seen 12636 · pro alarms 145 · live Early Pro buys 6 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 543
+- Scorebook: 59863 wallets seen across 3637 coins · trusted pro/early wallets: 16
+- Scans 1184 · coins checked 31695
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 30280
-- A crowd is buying: 25938
-- Busy (video: min volume): 23983
-- Size (video: min market cap): 23077
-- Money in the pool: 18913
-- Not too late: 6313
+- Survived launch (45 min – 4 h old): 30371
+- A crowd is buying: 26020
+- Busy (video: min volume): 24062
+- Size (video: min market cap): 23147
+- Money in the pool: 18980
+- Not too late: 6328
 - Not buying the top: 110
-- Live pro alarm: failed safety/insider checks: 102
+- Live pro alarm: failed safety/insider checks: 104
 - Live price data: 26
-- Two price sources disagree: 10
+- Two price sources disagree: 11
 - Real traders, not bots (video: fees paid): 2
 - No known dumpers among the biggest holders: 1
 
