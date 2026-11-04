@@ -1,5 +1,5 @@
-# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 4.8 of 7
-*Updated 2026-11-04 11:03 UTC · pretend money*
+# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 5.0 of 7
+*Updated 2026-11-04 17:07 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $-12.12 cash + 0 open
 - **All trades:** 11 trades · 2 wins · avg -38% · best +17% · worst -100% · total -42.12
@@ -12,20 +12,20 @@
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
 - **🚀 +100% trades:** 0 so far (≈0 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.1 s · watching 20 wallets/coins · pro buys seen 12838 · pro alarms 148 · live Early Pro buys 6 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 544
-- Scorebook: 59784 wallets seen across 3731 coins · trusted pro/early wallets: 20
-- Scans 1207 · coins checked 32387
+- ⚡ **Live feed (insider feature):** connected · delay ≈1.4 s · watching 34 wallets/coins · pro buys seen 13739 · pro alarms 158 · live Early Pro buys 6 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 544
+- Scorebook: 58329 wallets seen across 3928 coins · trusted pro/early wallets: 34
+- Scans 1264 · coins checked 34093
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 31022
-- A crowd is buying: 26557
-- Busy (video: min volume): 24593
-- Size (video: min market cap): 23655
-- Money in the pool: 19386
-- Not too late: 6473
-- Not buying the top: 111
-- Live pro alarm: failed safety/insider checks: 105
-- Live price data: 29
+- Survived launch (45 min – 4 h old): 32646
+- A crowd is buying: 27929
+- Busy (video: min volume): 25840
+- Size (video: min market cap): 24949
+- Money in the pool: 20406
+- Not too late: 6769
+- Not buying the top: 112
+- Live pro alarm: failed safety/insider checks: 111
+- Live price data: 33
 - Two price sources disagree: 11
 - Real traders, not bots (video: fees paid): 2
 - No known dumpers among the biggest holders: 1
