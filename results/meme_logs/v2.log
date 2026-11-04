@@ -1,3 +1,5 @@
 [2026-11-04 18:47] v2 BUY ⚡LIVE george path B pros 2 took=True
 [2026-11-04 18:48] v2 CLOSED george -12%
 pro alarm error: TypeError("'>=' not supported between instances of 'NoneType' and 'int'")
+[2026-11-04 19:49] v2 BUY ⚡LIVE BOTBAL path B pros 2 took=True
+[2026-11-04 19:50] v2 CLOSED BOTBAL -7%
