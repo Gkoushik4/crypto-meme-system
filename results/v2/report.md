@@ -1,5 +1,5 @@
-# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 4.3 of 7
-*Updated 2026-11-04 01:06 UTC · pretend money*
+# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 4.4 of 7
+*Updated 2026-11-04 01:30 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $0.93 cash + 0 open
 - **All trades:** 8 trades · 1 wins · avg -36% · best +4% · worst -100% · total -29.07
@@ -12,18 +12,18 @@
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
 - **🚀 +100% trades:** 0 so far (≈0 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.7 s · watching 10 wallets/coins · pro buys seen 11574 · pro alarms 126 · live Early Pro buys 5 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 532
-- Scorebook: 57323 wallets seen across 3358 coins · trusted pro/early wallets: 10
-- Scans 1120 · coins checked 29708
+- ⚡ **Live feed (insider feature):** connected · delay ≈1.6 s · watching 10 wallets/coins · pro buys seen 11616 · pro alarms 127 · live Early Pro buys 5 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 532
+- Scorebook: 57669 wallets seen across 3381 coins · trusted pro/early wallets: 10
+- Scans 1125 · coins checked 29748
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 28457
-- A crowd is buying: 24408
-- Busy (video: min volume): 22588
-- Size (video: min market cap): 21686
-- Money in the pool: 17815
-- Not too late: 5901
-- Not buying the top: 103
+- Survived launch (45 min – 4 h old): 28494
+- A crowd is buying: 24439
+- Busy (video: min volume): 22614
+- Size (video: min market cap): 21709
+- Money in the pool: 17834
+- Not too late: 5909
+- Not buying the top: 104
 - Live pro alarm: failed safety/insider checks: 96
 - Live price data: 26
 - Two price sources disagree: 8
