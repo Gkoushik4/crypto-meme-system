@@ -1,14 +1,14 @@
 # 🎯 Launch-snipe practice (insider feature) — day 6.1 of 7
-*Updated 2026-11-05 21:15:51 UTC · pretend money*
+*Updated 2026-11-05 21:35:54 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈4.0 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 329351 · passed insider checks: 13123 (4%) · no trades after our signal: 688
+- **Live feed:** connected · delay ≈3.5 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 329942 · passed insider checks: 13142 (4%) · no trades after our signal: 688
 - **PRACTICE ($15, $5 trades, max 5/day):** $17.53 cash + 0 open · 35 trades · 6 wins (17%) · avg +1% · best +108% · worst -37% · +100% trades 1 · total +2.53 on $5 trades
 - **SAMPLE (every coin that passed):** 420 trades · 76 wins (18%) · avg -6% · best +310% · worst -86% · +100% trades 11 · total -119.45 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 210 trades · 48 wins (23%) · avg -4% · best +760% · worst -95% · +100% trades 9 · total -39.41 on $5 trades
 - 🏁 **FINAL STRETCH PRACTICE ($15, $5 trades, max 5/day):** $9.68 cash + 0 open · 27 trades · 13 wins (48%) · avg -4% · best +33% · worst -92% · +100% trades 0 · total -5.32 on $5 trades
 - 🏁 **FINAL STRETCH SAMPLE (every coin that qualified):** 65 trades · 32 wins (49%) · avg -9% · best +69% · worst -92% · +100% trades 0 · total -27.75 on $5 trades
-- Final Stretch: 184 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
+- Final Stretch: 185 clean coins reached 70% of the curve · graduation point ≈85 SOL (from 200 graduations seen)
 - ⚠️ Practice account ran out at 2026-11-02 18:48:28 UTC (day 3.0) — continuing in tracking mode.
 - Known dumpers: 695 (grows with every dump we see)
 
@@ -25,12 +25,12 @@
 - INSIDER EXIT: creator sold: 85 trades, +54.11
 
 ## Why launches were skipped
-- Not a serial launcher: 291559
-- Not a copycat name: 285301
-- Creator bought ≤ 5%: 97156
-- Creator isn't a known dumper: 16737
-- FS: First buyers mostly holding: 10
-- FS: Creator hasn't sold: 3
+- Not a serial launcher: 292101
+- Not a copycat name: 285800
+- Creator bought ≤ 5%: 97326
+- Creator isn't a known dumper: 16792
+- FS: First buyers mostly holding: 11
+- FS: Creator hasn't sold: 4
 - FS: Money still coming in: 1
 
 ## Gaps
