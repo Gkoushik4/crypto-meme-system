@@ -1,5 +1,5 @@
-# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 5.3 of 7
-*Updated 2026-11-05 01:02 UTC · pretend money*
+# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 5.4 of 7
+*Updated 2026-11-05 01:22 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $-14.04 cash + 0 open
 - **All trades:** 13 trades · 2 wins · avg -34% · best +17% · worst -100% · total -44.04
@@ -12,9 +12,9 @@
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
 - **🚀 +100% trades:** 0 so far (≈0 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.4 s · watching 31 wallets/coins · pro buys seen 16477 · pro alarms 252 · live Early Pro buys 8 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 598
-- Scorebook: 58002 wallets seen across 4193 coins · trusted pro/early wallets: 31
-- Scans 1339 · coins checked 36098
+- ⚡ **Live feed (insider feature):** connected · delay ≈1.4 s · watching 31 wallets/coins · pro buys seen 16491 · pro alarms 252 · live Early Pro buys 8 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 598
+- Scorebook: 57639 wallets seen across 4213 coins · trusted pro/early wallets: 31
+- Scans 1343 · coins checked 36098
 
 ## Why coins were skipped
 - Survived launch (45 min – 4 h old): 34523
