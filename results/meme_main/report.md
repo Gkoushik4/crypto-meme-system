@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 6.2 of 7
-*Updated 2026-11-05 20:55 UTC · pretend money*
+*Updated 2026-11-05 21:16 UTC · pretend money*
 
 - **Practice account ($15 start):** $14.68 cash + 0 open coin(s)
 - **Practice trades:** 15 trades · 3 wins (20%) · average -0.3% per trade · best +133% · worst -30% · total -0.32 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 68 trades · 15 wins (22%) · average -4.7% per trade · best +236% · worst -67% · total -23.85 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 1665 · coins researched: 14585
+- Scans: 1669 · coins researched: 14619
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 17 trades · 4 wins (24%) · average -0.9% per trade · best +133% · worst -30% · total -1.20 on $7.50 trades
@@ -17,16 +17,16 @@
 - **failed 'Attention growing':** 53 trades · 13 wins (25%) · average -9.8% per trade · best +57% · worst -83% · total -38.99 on $7.50 trades
 - **failed 'Busy':** 17 trades · 5 wins (29%) · average -3.9% per trade · best +61% · worst -28% · total -4.94 on $7.50 trades
 - **failed 'More buyers than sellers':** 2 trades · 2 wins (100%) · average +39.5% per trade · best +75% · worst +4% · total +5.93 on $7.50 trades
-- **failed 'Not late':** 32 trades · 7 wins (22%) · average -12.3% per trade · best +132% · worst -96% · total -29.56 on $7.50 trades
+- **failed 'Not late':** 33 trades · 7 wins (21%) · average -13.5% per trade · best +132% · worst -96% · total -33.46 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 12470
-- Busy: 11623
-- Attention growing: 11026
-- Right size: 10971
-- More buyers than sellers: 9509
-- Graduated: 5541
-- New (present-day): 2890
-- Not late: 2458
+- Enough money in the pool: 12497
+- Busy: 11650
+- Attention growing: 11050
+- Right size: 10995
+- More buyers than sellers: 9530
+- Graduated: 5550
+- New (present-day): 2903
+- Not late: 2464
 - Can't freeze wallets: 2
 - Biggest wallet ≤ 10%: 2
 - Top 10 wallets ≤ 30%: 2
