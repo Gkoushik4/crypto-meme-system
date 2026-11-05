@@ -1,5 +1,5 @@
 # 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 5.5 of 7
-*Updated 2026-11-05 04:12 UTC · pretend money*
+*Updated 2026-11-05 04:35 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $-14.04 cash + 0 open
 - **All trades:** 13 trades · 2 wins · avg -34% · best +17% · worst -100% · total -44.04
@@ -9,20 +9,20 @@
 - **Normal-risk coins (standard profit lock):** 11 trades · 1 wins · avg -39% · best +17% · worst -100% · total -42.69
 - **Rug-risk coins — your version (75% at +150%, rest at +200%):** 2 trades · 1 wins · avg -7% · best +4% · worst -18% · total -1.35
 - **Rug-risk coins — safer blend (same coins, tracked side by side):** 2 trades · 0 wins · avg -37% · best -31% · worst -43% · total -7.33
-- **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** no closed trades yet
+- **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** 1 trades · 0 wins · avg -37% · best -37% · worst -37% · total -3.75
 - **🚀 +100% trades:** 0 so far (≈0 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.0 s · watching 31 wallets/coins · pro buys seen 16979 · pro alarms 258 · live Early Pro buys 8 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 598
-- Scorebook: 59560 wallets seen across 4335 coins · trusted pro/early wallets: 31
-- Scans 1370 · coins checked 36817
+- ⚡ **Live feed (insider feature):** connected · delay ≈1.1 s · watching 28 wallets/coins · pro buys seen 16989 · pro alarms 258 · live Early Pro buys 8 · live exits 3 (insider/creator/pro sells: 0) · known dumpers 598
+- Scorebook: 58688 wallets seen across 4348 coins · trusted pro/early wallets: 28
+- Scans 1374 · coins checked 36926
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 35206
-- A crowd is buying: 30082
-- Busy (video: min volume): 27806
-- Size (video: min market cap): 27003
-- Money in the pool: 22043
-- Not too late: 7258
+- Survived launch (45 min – 4 h old): 35309
+- A crowd is buying: 30168
+- Busy (video: min volume): 27890
+- Size (video: min market cap): 27082
+- Money in the pool: 22101
+- Not too late: 7279
 - Live pro alarm: failed safety/insider checks: 145
 - Not buying the top: 118
 - Live price data: 46
