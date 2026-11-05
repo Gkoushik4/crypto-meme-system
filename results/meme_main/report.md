@@ -1,32 +1,32 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 5.3 of 7
-*Updated 2026-11-05 00:22 UTC · pretend money*
+*Updated 2026-11-05 00:42 UTC · pretend money*
 
-- **Practice account ($15 start):** $12.11 cash + 1 open coin(s)
-- **Practice trades:** 12 trades · 3 wins (25%) · average +5.1% per trade · best +133% · worst -30% · total +4.61 on $7.50 trades
-- **Shadow log (every coin that passed, no limits):** 57 trades · 15 wins (26%) · average +1.2% per trade · best +236% · worst -47% · total +5.24 on $7.50 trades
+- **Practice account ($15 start):** $18.55 cash + 0 open coin(s)
+- **Practice trades:** 13 trades · 3 wins (23%) · average +3.6% per trade · best +133% · worst -30% · total +3.55 on $7.50 trades
+- **Shadow log (every coin that passed, no limits):** 60 trades · 15 wins (25%) · average -1.3% per trade · best +236% · worst -67% · total -5.94 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 1421 · coins researched: 12400
+- Scans: 1425 · coins researched: 12437
 
 ## Same coins, different exit styles (shadow log)
-- **Ladder:** 14 trades · 4 wins (29%) · average +3.5% per trade · best +133% · worst -30% · total +3.72 on $7.50 trades
+- **Ladder:** 15 trades · 4 wins (27%) · average +2.4% per trade · best +133% · worst -30% · total +2.67 on $7.50 trades
 - **EarlyBird:** 15 trades · 6 wins (40%) · average +8.5% per trade · best +236% · worst -32% · total +9.53 on $7.50 trades
-- **Promising:** 14 trades · 3 wins (21%) · average -3.0% per trade · best +167% · worst -47% · total -3.16 on $7.50 trades
-- **Holders7:** 14 trades · 2 wins (14%) · average -4.6% per trade · best +206% · worst -34% · total -4.85 on $7.50 trades
+- **Promising:** 15 trades · 3 wins (20%) · average -7.3% per trade · best +167% · worst -67% · total -8.22 on $7.50 trades
+- **Holders7:** 15 trades · 2 wins (13%) · average -8.8% per trade · best +206% · worst -67% · total -9.91 on $7.50 trades
 
 ## Near-misses (safe, failed only one timing rule)
-- **failed 'Attention growing':** 44 trades · 10 wins (23%) · average -11.3% per trade · best +57% · worst -83% · total -37.32 on $7.50 trades
+- **failed 'Attention growing':** 45 trades · 10 wins (22%) · average -11.1% per trade · best +57% · worst -83% · total -37.44 on $7.50 trades
 - **failed 'Busy':** 15 trades · 4 wins (27%) · average -4.2% per trade · best +61% · worst -28% · total -4.77 on $7.50 trades
 - **failed 'More buyers than sellers':** 2 trades · 2 wins (100%) · average +39.5% per trade · best +75% · worst +4% · total +5.93 on $7.50 trades
-- **failed 'Not late':** 27 trades · 7 wins (26%) · average -9.3% per trade · best +132% · worst -96% · total -18.75 on $7.50 trades
+- **failed 'Not late':** 28 trades · 7 wins (25%) · average -9.9% per trade · best +132% · worst -96% · total -20.88 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 10630
-- Busy: 9857
-- Right size: 9397
-- Attention growing: 9345
-- More buyers than sellers: 8017
-- Graduated: 4894
-- New (present-day): 2378
-- Not late: 2149
+- Enough money in the pool: 10659
+- Busy: 9887
+- Right size: 9422
+- Attention growing: 9374
+- More buyers than sellers: 8039
+- Graduated: 4905
+- New (present-day): 2385
+- Not late: 2154
 - Can't freeze wallets: 2
 - Biggest wallet ≤ 10%: 2
 - Top 10 wallets ≤ 30%: 2
