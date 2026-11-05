@@ -1,11 +1,11 @@
 # 🐸 Meme practice (week 2 — real costs, see lessons.md) — day 5.5 of 7
-*Updated 2026-11-05 04:34 UTC · pretend money*
+*Updated 2026-11-05 04:55 UTC · pretend money*
 
 - **Practice account ($15 start):** $18.55 cash + 0 open coin(s)
 - **Practice trades:** 13 trades · 3 wins (23%) · average +3.6% per trade · best +133% · worst -30% · total +3.55 on $7.50 trades
 - **Shadow log (every coin that passed, no limits):** 60 trades · 15 wins (25%) · average -1.3% per trade · best +236% · worst -67% · total -5.94 on $7.50 trades
 - **Promising book ($20 start, $10 trades):** $15.28 cash + 0 open · 1 trades · 0 wins (0%) · average -47.2% per trade · best -47% · worst -47% · total -4.72 on $7.50 trades
-- Scans: 1471 · coins researched: 12851
+- Scans: 1475 · coins researched: 12887
 
 ## Same coins, different exit styles (shadow log)
 - **Ladder:** 15 trades · 4 wins (27%) · average +2.4% per trade · best +133% · worst -30% · total +2.67 on $7.50 trades
@@ -14,19 +14,19 @@
 - **Holders7:** 15 trades · 2 wins (13%) · average -8.8% per trade · best +206% · worst -67% · total -9.91 on $7.50 trades
 
 ## Near-misses (safe, failed only one timing rule)
-- **failed 'Attention growing':** 46 trades · 10 wins (22%) · average -11.1% per trade · best +57% · worst -83% · total -38.18 on $7.50 trades
+- **failed 'Attention growing':** 47 trades · 11 wins (23%) · average -10.8% per trade · best +57% · worst -83% · total -37.98 on $7.50 trades
 - **failed 'Busy':** 16 trades · 4 wins (25%) · average -4.5% per trade · best +61% · worst -28% · total -5.36 on $7.50 trades
 - **failed 'More buyers than sellers':** 2 trades · 2 wins (100%) · average +39.5% per trade · best +75% · worst +4% · total +5.93 on $7.50 trades
-- **failed 'Not late':** 30 trades · 7 wins (23%) · average -10.8% per trade · best +132% · worst -96% · total -24.22 on $7.50 trades
+- **failed 'Not late':** 31 trades · 7 wins (23%) · average -11.4% per trade · best +132% · worst -96% · total -26.43 on $7.50 trades
 ## Why coins were rejected
-- Enough money in the pool: 11014
-- Busy: 10230
-- Right size: 9708
-- Attention growing: 9701
-- More buyers than sellers: 8317
-- Graduated: 5041
-- New (present-day): 2447
-- Not late: 2210
+- Enough money in the pool: 11045
+- Busy: 10259
+- Right size: 9734
+- Attention growing: 9730
+- More buyers than sellers: 8344
+- Graduated: 5051
+- New (present-day): 2452
+- Not late: 2215
 - Can't freeze wallets: 2
 - Biggest wallet ≤ 10%: 2
 - Top 10 wallets ≤ 30%: 2
