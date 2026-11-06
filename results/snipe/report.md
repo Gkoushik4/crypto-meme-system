@@ -1,8 +1,8 @@
 # 🎯 Launch-snipe practice (insider feature) — day 6.4 of 7
-*Updated 2026-11-06 04:47:14 UTC · pretend money*
+*Updated 2026-11-06 05:07:18 UTC · pretend money*
 
-- **Live feed:** connected · delay ≈3.9 s · we buy ~1 s after launch (real snipers: same block)
-- **Launches seen:** 349413 · passed insider checks: 13662 (4%) · no trades after our signal: 688
+- **Live feed:** connected · delay ≈1.1 s · we buy ~1 s after launch (real snipers: same block)
+- **Launches seen:** 350331 · passed insider checks: 13688 (4%) · no trades after our signal: 688
 - **PRACTICE ($15, $5 trades, max 5/day):** $17.53 cash + 0 open · 35 trades · 6 wins (17%) · avg +1% · best +108% · worst -37% · +100% trades 1 · total +2.53 on $5 trades
 - **SAMPLE (every coin that passed):** 420 trades · 76 wins (18%) · avg -6% · best +310% · worst -86% · +100% trades 11 · total -119.45 on $5 trades
 - **CONTROL (coins that FAILED the checks):** 210 trades · 48 wins (23%) · avg -4% · best +760% · worst -95% · +100% trades 9 · total -39.41 on $5 trades
@@ -25,10 +25,10 @@
 - INSIDER EXIT: creator sold: 85 trades, +54.11
 
 ## Why launches were skipped
-- Not a serial launcher: 309777
-- Not a copycat name: 302948
-- Creator bought ≤ 5%: 103553
-- Creator isn't a known dumper: 17469
+- Not a serial launcher: 310625
+- Not a copycat name: 303768
+- Creator bought ≤ 5%: 103820
+- Creator isn't a known dumper: 17513
 - FS: First buyers mostly holding: 11
 - FS: Creator hasn't sold: 4
 - FS: Money still coming in: 1
