@@ -1,5 +1,5 @@
 # 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 6.7 of 7
-*Updated 2026-11-06 08:37 UTC · pretend money*
+*Updated 2026-11-06 09:01 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $-4.63 cash + 0 open
 - **All trades:** 15 trades · 3 wins · avg -23% · best +104% · worst -100% · total -34.63
@@ -10,21 +10,21 @@
 - **Rug-risk coins — your version (75% at +150%, rest at +200%):** 3 trades · 2 wins · avg +30% · best +104% · worst -18% · total +9.01
 - **Rug-risk coins — safer blend (same coins, tracked side by side):** 3 trades · 1 wins · avg -0% · best +72% · worst -43% · total -0.08
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** 1 trades · 0 wins · avg -37% · best -37% · worst -37% · total -3.75
-- **🚀 +100% trades:** 1 so far (≈5 per month at this pace)
+- **🚀 +100% trades:** 1 so far (≈4 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.0 s · watching 24 wallets/coins · pro buys seen 19837 · pro alarms 300 · live Early Pro buys 9 · live exits 4 (insider/creator/pro sells: 0) · known dumpers 695
-- Scorebook: 62510 wallets seen across 5454 coins · trusted pro/early wallets: 24
-- Scans 1660 · coins checked 45201
+- ⚡ **Live feed (insider feature):** connected · delay ≈1.0 s · watching 24 wallets/coins · pro buys seen 19921 · pro alarms 303 · live Early Pro buys 9 · live exits 4 (insider/creator/pro sells: 0) · known dumpers 695
+- Scorebook: 62690 wallets seen across 5470 coins · trusted pro/early wallets: 24
+- Scans 1664 · coins checked 45299
 
 ## Why coins were skipped
-- Survived launch (45 min – 4 h old): 43360
-- A crowd is buying: 36933
-- Busy (video: min volume): 33928
-- Size (video: min market cap): 33624
-- Money in the pool: 26896
-- Not too late: 8837
-- Live pro alarm: failed safety/insider checks: 174
-- Not buying the top: 142
+- Survived launch (45 min – 4 h old): 43455
+- A crowd is buying: 37012
+- Busy (video: min volume): 34006
+- Size (video: min market cap): 33696
+- Money in the pool: 26960
+- Not too late: 8857
+- Live pro alarm: failed safety/insider checks: 176
+- Not buying the top: 143
 - Live price data: 51
 - Two price sources disagree: 19
 - Real traders, not bots (video: fees paid): 4
