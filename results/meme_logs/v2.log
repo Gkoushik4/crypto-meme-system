@@ -1,5 +1,5 @@
-# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 7.0 of 7
-*Updated 2026-11-06 16:52 UTC · pretend money*
+# 🦅 Meme v2 practice (week 2 — fixed rules, see lessons.md) — day 7.1 of 7
+*Updated 2026-11-06 19:29 UTC · pretend money*
 
 - **Practice account ($30 start, $10 trades):** $-4.63 cash + 0 open
 - **All trades:** 15 trades · 3 wins · avg -23% · best +104% · worst -100% · total -34.63
@@ -12,8 +12,8 @@
 - **MISSED (passed but skipped — daily limit / 2 open; same rules, no money):** 1 trades · 0 wins · avg -37% · best -37% · worst -37% · total -3.75
 - **🚀 +100% trades:** 1 so far (≈4 per month at this pace)
 - ⚠️ Account ran out of money at 2026-11-02 03:20 UTC (day 2.4) — continuing in tracking mode.
-- ⚡ **Live feed (insider feature):** connected · delay ≈1.4 s · watching 19 wallets/coins · pro buys seen 21199 · pro alarms 376 · live Early Pro buys 9 · live exits 4 (insider/creator/pro sells: 0) · known dumpers 695
-- Scorebook: 64948 wallets seen across 5777 coins · trusted pro/early wallets: 19
+- ⚡ **Live feed (insider feature):** connected · delay ≈0.0 s · watching 0 wallets/coins · pro buys seen 21199 · pro alarms 376 · live Early Pro buys 9 · live exits 4 (insider/creator/pro sells: 0) · known dumpers 695
+- Scorebook: 64948 wallets seen across 5777 coins · trusted pro/early wallets: 21
 - Scans 1743 · coins checked 47302
 
 ## Why coins were skipped
@@ -35,4 +35,5 @@
 - 2026-10-23 09:32 → 2026-10-23 10:58 UTC
 - 2026-10-23 12:55 → 2026-10-23 18:49 UTC
 - 2026-10-24 04:52 → 2026-10-31 18:34 UTC — paused (usage limit), clock shifted; moving to GitHub
+- 2026-11-06 16:52 → 2026-11-06 19:29 UTC
 WEEK DONE
