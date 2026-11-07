@@ -1,5 +1,5 @@
-# 🎯 Launch-snipe practice (insider feature) — day 7.0 of 7
-*Updated 2026-11-06 19:29:22 UTC · pretend money*
+# 🎯 Launch-snipe practice (insider feature) — day 7.5 of 7
+*Updated 2026-11-07 06:08:29 UTC · pretend money*
 
 - **Live feed:** reconnecting · delay ≈0.0 s · we buy ~1 s after launch (real snipers: same block)
 - **Launches seen:** 386398 · passed insider checks: 14837 (4%) · no trades after our signal: 710
@@ -41,3 +41,4 @@
 - 2026-11-04 11:13:01 → 2026-11-04 11:19:02 UTC
 - 2026-11-05 20:30:14 → 2026-11-05 20:36:47 UTC
 - 2026-11-06 18:36:08 → 2026-11-06 19:29:22 UTC
+- 2026-11-06 18:36:08 → 2026-11-07 06:08:29 UTC
