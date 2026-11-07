@@ -1,14 +1,14 @@
 # Crypto copy-trading — LIVE practice (pretend money)
-*Started 2026-10-21 04:27 UTC · updated 2026-11-07 12:03 UTC*
+*Started 2026-10-21 04:27 UTC · updated 2026-11-07 12:05 UTC*
 
 | version | account | closed trades | wins | losses | win % | avg win | avg loss | open now |
 |---|---|---|---|---|---|---|---|---|
-| 1 Copy every trade | 84.41 | 15 | 5 | 10 | 33% | +1.74R | -0.87R | 2 |
-| 2 + emergency pause & stand-in | 84.41 | 15 | 5 | 10 | 33% | +1.74R | -0.87R | 2 |
+| 1 Copy every trade | 83.52 | 16 | 5 | 11 | 31% | +1.74R | -0.89R | 1 |
+| 2 + emergency pause & stand-in | 83.52 | 16 | 5 | 11 | 31% | +1.74R | -0.89R | 1 |
 | 3 + trade check | 85.07 | 2 | 1 | 1 | 50% | +1.14R | -1.05R | 0 |
 | 4 + really-good while paused | 85.07 | 2 | 1 | 1 | 50% | +1.14R | -1.05R | 0 |
-| 5 Copy every trade + scale out | 83.94 | 15 | 7 | 8 | 47% | +1.08R | -1.08R | 2 |
-| 6 Copy every trade + stop-and-reverse | 86.35 | 22 | 8 | 14 | 36% | +1.97R | -0.85R | 3 |
+| 5 Copy every trade + scale out | 83.06 | 16 | 7 | 9 | 44% | +1.08R | -1.08R | 1 |
+| 6 Copy every trade + stop-and-reverse | 85.44 | 23 | 8 | 15 | 35% | +1.97R | -0.86R | 3 |
 | 7 REGIME (adapts to the market) | 85.82 | 6 | 4 | 2 | 67% | +1.05R | -1.13R | 0 |
 
 ## Team changes
