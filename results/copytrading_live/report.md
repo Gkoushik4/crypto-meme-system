@@ -1,5 +1,5 @@
 # Crypto copy-trading — LIVE practice (pretend money)
-*Started 2026-10-21 04:27 UTC · updated 2026-11-15 02:08 UTC*
+*Started 2026-10-21 04:27 UTC · updated 2026-11-15 02:10 UTC*
 
 | version | account | closed trades | wins | losses | win % | avg win | avg loss | open now |
 |---|---|---|---|---|---|---|---|---|
@@ -8,8 +8,8 @@
 | 3 + trade check | 85.07 | 2 | 1 | 1 | 50% | +1.14R | -1.05R | 0 |
 | 4 + really-good while paused | 85.07 | 2 | 1 | 1 | 50% | +1.14R | -1.05R | 0 |
 | 5 Copy every trade + scale out | 79.07 | 24 | 9 | 15 | 38% | +0.94R | -1.10R | 0 |
-| 6 Copy every trade + stop-and-reverse | 83.84 | 38 | 11 | 27 | 29% | +2.22R | -0.91R | 1 |
-| 7 REGIME (adapts to the market) | 83.85 | 12 | 5 | 7 | 42% | +1.41R | -1.14R | 1 |
+| 6 Copy every trade + stop-and-reverse | 82.93 | 39 | 11 | 28 | 28% | +2.22R | -0.91R | 0 |
+| 7 REGIME (adapts to the market) | 82.94 | 13 | 5 | 8 | 38% | +1.41R | -1.14R | 0 |
 
 ## Team changes
 - 2026-10-30 20:15 0x246f…574c (bench) is in a bad period (down -11% on copied trades) → watch-only
